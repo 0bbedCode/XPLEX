@@ -1,0 +1,57 @@
+plugins {
+    alias(libs.plugins.android.library)
+}
+
+android {
+    namespace 'com.obbedcode.shared'
+    compileSdk 34
+
+    sourceSets {
+        main {
+            aidl.srcDirs = ['src/main/aidl']
+            //            aidl.srcDirs = ['app/src/main/aidl/obbedcode/shared', 'app/src/main/aidl', 'src/main/aidl', 'main/aidl']
+            //aidl/com/obbedcode/shared/IXplexService.aidl
+        }
+    }
+
+    buildFeatures {
+        aidl = true
+        buildConfig = true
+    }
+
+    defaultConfig {
+        minSdk 23
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    compileOnly 'de.robv.android.xposed:api:82'
+    implementation 'org.lsposed.hiddenapibypass:hiddenapibypass:4.3'
+
+    implementation libs.dev.rikka.hidden.stub
+    implementation libs.dev.rikka.hidden.compat
+
+    implementation libs.libsu.core
+    implementation libs.libsu.service
+    implementation libs.libsu.nio
+
+    implementation libs.appcompat
+    implementation libs.material
+    testImplementation libs.junit
+    androidTestImplementation libs.ext.junit
+    androidTestImplementation libs.espresso.core
+}

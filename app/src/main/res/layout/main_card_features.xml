@@ -1,0 +1,12 @@
+<!-- main_card_features.xml -->
+<com.google.android.flexbox.FlexboxLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/flexboxLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:flexWrap="wrap"
+    app:alignItems="center"
+    app:justifyContent="flex_start"
+    android:padding="10dp">
+</com.google.android.flexbox.FlexboxLayout>

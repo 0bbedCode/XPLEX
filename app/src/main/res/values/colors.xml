@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="notification">#3F51B5</color>
+
+    <color name="app_color_light">#3F51B5</color>
+    <color name="app_color_dark">#B1B8DF</color>
+
+    <color name="progress_background">#E0E0E0</color>
+    <color name="progress_secondary">#B3E5FC</color>
+    <color name="progress_primary">#03A9F4</color>
+    <color name="ripple_color">#20000000</color>
+</resources>

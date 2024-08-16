@@ -1,0 +1,48 @@
+<resources>
+    <string name="app_name">XPLEX</string>
+    <string name="action_settings">Settings</string>
+
+
+    <string name="text_total_spoofed">Spoofed</string>
+    <string name="text_total_exceptions">Exceptions</string>
+    <string name="text_total_hooks">Hooks</string>
+
+    <string name="text_core_status_good">Core Healthy</string>
+    <string name="text_core_status_good_message">Everything Looks good in XPLEX sit back and relax!</string>
+
+    <string name="text_core_status_warning">Core Warnings</string>
+    <string name="text_core_status_warning_message">There seems to be some warnings within the XPLEX Core!</string>
+
+    <string name="card_test_title">Core Tests</string>
+    <string name="card_test_summary">Core tests to ensure Application is running at its best!</string>
+
+    <string name="card_welcome_title">Welcome to XPL-EX! v8</string>
+    <string name="card_welcome_summary">Welcome:</string>
+
+    <string name="text_test_root">Root Access</string>
+    <string name="text_test_xposed">Xposed Framework</string>
+    <string name="text_test_service">XPlex Bridge Service</string>
+    <string name="text_test_folder_xlua">XLua Folder </string>
+    <string name="text_test_folder_xplex">XPlex Folder </string>
+
+
+    <string name="message_test_failed_xlua_folder">XLua Folder seems to Exists Consider Deleting it to avoid Detections assuming your XPL-EX Folder is created with its databases.</string>
+
+    <string name="message_test_log">Running Test: </string>
+
+    <string name="message_welcome">XPL-EX is Designed to prevent apps from getting device identifiers and more. ObbedCode wishes you luck, much love</string>
+
+    <string name="text_username_prompt">What should I call you ? Enter a username does not matter wont be shared</string>
+    <string name="text_username">Username</string>
+
+    <string name="text_ok">Ok</string>
+
+    <string name="message_about">
+         <![CDATA[<br><br>]]> Hello this is ObbedCode, this Project (was) based off of XPrivacy Lua til I decided to take it into a new direction put over 40000+ new lines of Code into it.
+         <![CDATA[<br><br>]]> This project will be fully free and Open Source, no need for Unknown Code to protect your Privacy.
+         <![CDATA[<br><br>]]> It uses Android Java Material UI with Rikka Apps Library, UI based from Shizuku.
+         <![CDATA[<br><br>]]> The goal of this is to be you all in one Privacy Application for now can only provide Api Hooking!
+         <![CDATA[<br><br>]]> Do as you please Modify anything as you please its FOSS no catches!
+    </string>
+
+</resources>

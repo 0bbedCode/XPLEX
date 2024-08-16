@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="homeCardStyle" format="reference" />
+    <attr name="appColorPrimary" format="reference" />
+
+
+    <declare-styleable name="FeatureItemView">
+        <attr name="icon" format="reference" />
+        <attr name="text" format="string" />
+        <attr name="cardBackgroundColor" format="color" />
+        <attr name="textColor" format="color" />
+    </declare-styleable>
+
+</resources>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/itemCoreStatus"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/iv_core_item_icon"
+        style="@style/RegularIcon"
+        android:duplicateParentState="true"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_remix_login_circle_line"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/pb_test_progress"
+        style="@style/Base.Widget.AppCompat.ProgressBar"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_core_item_name"
+        style="@style/CardTitle"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_marginStart="10dp"
+        android:duplicateParentState="true"
+        android:text="Title Of Item"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_core_item_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/iv_core_item_icon"
+        app:layout_constraintTop_toTopOf="@+id/iv_core_item_icon" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

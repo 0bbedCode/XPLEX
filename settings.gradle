@@ -1,0 +1,43 @@
+pluginManagement {
+    repositories {
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
+        mavenCentral()
+        gradlePluginPortal()
+        mavenLocal()
+        maven {
+            url("https://s01.oss.sonatype.org/content/repositories/releases/")
+            content {
+                includeGroup("dev.rikka.tools.refine")
+                includeGroup("dev.rikka.tools.autoresconfig")
+                includeGroup("dev.rikka.tools.materialthemebuilder")
+            }
+        }
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        mavenLocal()
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://api.xposed.info' }
+        maven {
+            url("https://s01.oss.sonatype.org/content/repositories/releases/")
+            content {
+                includeGroupByRegex("dev.rikka.*")
+                includeGroup("org.lsposed.hiddenapibypass")
+            }
+        }
+    }
+}
+
+rootProject.name = "xplex"
+include ':app'
+include ':shared'

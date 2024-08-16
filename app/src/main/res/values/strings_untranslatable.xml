@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="scopes" translatable="false">
+        <item>android</item>
+        <item>com.android.providers.settings</item>
+        <item>com.obbedcode.xplex</item>
+    </string-array>
+
+</resources>
