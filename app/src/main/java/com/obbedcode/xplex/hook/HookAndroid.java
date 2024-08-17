@@ -12,6 +12,7 @@ import android.os.RemoteException;
 
 import com.obbedcode.shared.Constants;
 import com.obbedcode.shared.Str;
+import com.obbedcode.shared.hook.HookManager;
 import com.obbedcode.shared.logger.XLog;
 import com.obbedcode.shared.reflect.ReflectUtil;
 import com.obbedcode.shared.utils.PkgUtils;
@@ -33,17 +34,17 @@ import rikka.hidden.compat.adapter.UidObserverAdapter;
 
 public class HookAndroid {
     private static final String TAG = "ObbedCode.XP.HookAndroid";
-    private static boolean hasFoundPackageService = false;
 
-    private static final List<XC_MethodHook.Unhook> hookz = new ArrayList<>();
-    private static int APP_UID = 0;
+    private static boolean hasFoundPackageService = false;
+    private static final HookManager manager = new HookManager();
 
     public static void deployHook(final XC_LoadPackage.LoadPackageParam lpparam) {
         if("android".equals(lpparam.packageName)) {
             XLog.i(TAG, "Found (SYSTEM_SERVER) " + lpparam.packageName, true);
             try {
-                @SuppressLint("PrivateApi") Class<?> clazzSM = Class.forName("android.os.ServiceManager", false, lpparam.classLoader);
-                final Set<XC_MethodHook.Unhook> hzs = XposedBridge.hookAllMethods(clazzSM, "addService", new XC_MethodHook() {
+                @SuppressLint("PrivateApi")
+                Class<?> clazzSM = Class.forName("android.os.ServiceManager", false, lpparam.classLoader);
+                manager.hookAllMethods(clazzSM, "addService", new XC_MethodHook() {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         try {
@@ -53,29 +54,17 @@ public class HookAndroid {
                                 if(hasFoundPackageService)
                                     return;
 
-                                //addService(ServiceName, Interface)
                                 IPackageManager pms = (IPackageManager)param.args[1];
                                 if(pms == null) {
                                     XLog.e(TAG, "Casting Param[1] to IPackageManager Interface failed", true, true);
                                     return;
                                 }
 
-                                //Iterator<Unhook> hI = hookz.iterator();
-                                //XLog.i(TAG, "Unhooking now.... size=" + hookz.size(), true);
-                                //for (XC_MethodHook.Unhook h : hookz) {
-                                //    h.unhook();
-                                //}
-
-                                XLog.i(TAG, "All hooks are now unhooked from [addService]", true);
-
                                 hasFoundPackageService = true;
+                                manager.unHook("addService");
                                 XLog.i(TAG, "Found [package] pms Service now creating our Service ?", true);
-                                new XplexService();
-
-                                APP_UID = PkgUtils.getPackageUidCompat(pms, Constants.APP_PACKAGE_NAME, 0, 0);
-
-                                //this can init twice so avoid twice init
-                                /*new Thread(() -> {
+                                XLog.i(TAG, "All hooks are now unhooked from [addService]", true);
+                                new Thread(() -> {
                                     try {
                                         XLog.i(TAG, "Starting XPL-EX Thread for Service...", true);
                                         UserService.register(pms);
@@ -83,7 +72,7 @@ public class HookAndroid {
                                     }catch (Exception e) {
                                         XLog.e(TAG, "Failed to Start XPL-EX Service: " + e.getMessage(), true, true);
                                     }
-                                }).start();*/
+                                }).start();
                             }
                         }catch (Exception innerServiceManager) {
                             XLog.e(TAG, innerServiceManager, true);
@@ -92,13 +81,13 @@ public class HookAndroid {
                         }
                     }
                 });
-                hookz.addAll(hzs);
+
 
                 //https://android.googlesource.com/platform/frameworks/base.git/+/master/core/java/com/android/internal/os/ZygoteInit.java
                 //com.android.server.am.ActivityManagerService [startProcessLocked] [startIsolatedProcess]
 
 
-                Class<?> clazzZY = Class.forName("android.os.ZygoteProcess", false, lpparam.classLoader);
+                /*Class<?> clazzZY = Class.forName("android.os.ZygoteProcess", false, lpparam.classLoader);
                 XposedBridge.hookAllMethods(clazzZY, "startViaZygote", new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
@@ -110,7 +99,7 @@ public class HookAndroid {
                             XLog.e(TAG, "Failed to After Hook for [startViaZygote]: " + e.getMessage(), true, true);
                         }
                     }
-                });
+                });*/
 
 
                 //XLog.i(TAG, "Hooking [startProcessLocked] Method in Android", true);

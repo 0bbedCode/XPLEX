@@ -15,6 +15,24 @@ public class BuildRuntime {
                 Build.VERSION.SDK_INT == Build.VERSION_CODES.N || Build.VERSION.SDK_INT == Build.VERSION_CODES.N_MR1;
     }
 
+    public static boolean isSnowConeApi31Android12() { return isSnowConeApi31Android12(false); }
+    public static boolean isSnowConeApi31Android12(boolean orIsHigher) {
+        return orIsHigher ? Build.VERSION.SDK_INT >= Build.VERSION_CODES.S :
+                Build.VERSION.SDK_INT == Build.VERSION_CODES.S;
+    }
+
+    public static boolean isRedVelvetCakeApi30Android11() { return isRedVelvetCakeApi30Android11(false); }
+    public static boolean isRedVelvetCakeApi30Android11(boolean orIsHigher) {
+        return orIsHigher ? Build.VERSION.SDK_INT >= Build.VERSION_CODES.R :
+                Build.VERSION.SDK_INT == Build.VERSION_CODES.R;
+    }
+
+    public static boolean isQuinceTartApi29Android10() { return isQuinceTartApi29Android10(false); }
+    public static boolean isQuinceTartApi29Android10(boolean orIsHigher) {
+        return orIsHigher ? Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q :
+                Build.VERSION.SDK_INT == Build.VERSION_CODES.Q;
+    }
+
     public static boolean isPieApi28Android9() { return isPieApi28Android9(false); }
     public static boolean isPieApi28Android9(boolean orIsHigher) {
         return orIsHigher ? Build.VERSION.SDK_INT >= Build.VERSION_CODES.P :

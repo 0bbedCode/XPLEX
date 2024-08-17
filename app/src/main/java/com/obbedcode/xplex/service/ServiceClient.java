@@ -9,44 +9,49 @@ import android.util.Log;
 
 
 //import com.obbedcode.shared.IXplexService;
+import com.obbedcode.shared.IXPService;
+import com.obbedcode.shared.IXplexService;
+import com.obbedcode.shared.data.XApp;
 import com.obbedcode.shared.logger.XLog;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.List;
 
 //
 //This is for the Client, will contact actual XplexService (ServiceClient.getLogs() => HMAService.getLogs())
 //
-/*public class ServiceClient extends IXplexService.Stub implements IBinder.DeathRecipient {
+public class ServiceClient extends IXPService.Stub implements IBinder.DeathRecipient {
     private static final String TAG = "ObbedCode.XP.ServiceClient";
-    private static IXplexService service;
+    private static IXPService service;
 
-    //Proxy Class for Service
     private static class ServiceProxy implements InvocationHandler {
-        private final IXplexService obj;
-        ServiceProxy(IXplexService obj) { this.obj = obj; }
+        private final IXPService obj;
+        ServiceProxy(IXPService obj) { this.obj = obj; }
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             Object result = method.invoke(obj, args);
             if (result == null)
-                Log.i(TAG, "Call service method " + method.getName());
+                XLog.i(TAG, "Call service method " + method.getName());
              else
-                Log.i(TAG, "Call service method " + method.getName() + " with result " + result.toString().substring(0, Math.min(20, result.toString().length())));
+                XLog.i(TAG, "Call service method " + method.getName() + " with result " + result.toString().substring(0, Math.min(20, result.toString().length())));
 
             return result;
         }
     }
 
     public static void linkService(IBinder binder) {
-        service = (IXplexService) Proxy.newProxyInstance(
+        XLog.i(TAG, "Linking the System Service Binder to a Proxy Service Class...");
+        service = (IXPService) Proxy.newProxyInstance(
                 ServiceClient.class.getClassLoader(),
-                new Class[]{IXplexService.class},
-                new ServiceProxy(IXplexService.Stub.asInterface(binder)));
+                new Class[]{IXPService.class},
+                new ServiceProxy(IXPService.Stub.asInterface(binder)));
+        XLog.i(TAG, "System Service Binder has been linked to the Proxy Service Class ");
         try {
             binder.linkToDeath(new ServiceClient(), 0);
         } catch (RemoteException e) {
-            Log.e(TAG, "Failed to link death recipient", e);
+            XLog.e(TAG, "Failed to link death recipient: " + e.getMessage());
         }
     }
 
@@ -56,28 +61,16 @@ import java.lang.reflect.Proxy;
     @Override
     public IBinder asBinder() { return service == null ? null : service.asBinder(); }
 
+    @Override
+    public void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat, double aDouble, String aString) throws RemoteException {
 
+    }
 
     @Override
-    public int getServiceVersion() throws RemoteException {
-
+    public String getLog() throws RemoteException {
+        return "";
     }
 
-    private IXplexService getServiceLegacy() {
-        if(service != null) return service;
-
-        IBinder pm = ServiceManager.getService("package");
-        Parcel data = Parcel.obtain();
-        Parcel reply = Parcel.obtain();
-
-        IXplexService remote = null;
-        try {
-            data.writeInterfaceToken("com.something");
-        }catch (RemoteException e) {
-            XLog.e(TAG, "Remote Exception Service: " + e);
-        } finally {
-            data.recycle();
-            reply.recycle();
-        }
-    }
-}*/
+    @Override
+    public List<XApp> getInstalledAppsEx() throws RemoteException { return service.getInstalledAppsEx(); }
+}

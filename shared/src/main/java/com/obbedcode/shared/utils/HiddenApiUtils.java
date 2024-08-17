@@ -3,6 +3,8 @@ package com.obbedcode.shared.utils;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.IPackageManager;
 import android.os.IBinder;
 import android.os.ServiceManager;
 import android.util.Log;
@@ -70,6 +72,49 @@ public class HiddenApiUtils {
         }catch (Exception e) {
             XLog.e(TAG, "Error Invoking getRunningAppProcesses... " + e.getMessage());
             return procs;
+        }
+    }
+
+    public static CharSequence getApplicationLabel(String packageName) {
+        try {
+            XLog.i(TAG, "Getting Label for Package Name: " + packageName);
+            // Get IPackageManager instance
+            IPackageManager packageManager = (IPackageManager) getIPackageManager();
+
+            XLog.i(TAG, "Got Package Manager: " + packageName);
+            // Reflectively get the getApplicationLabel method
+            Method getApplicationLabelMethod = packageManager.getClass()
+                    .getMethod("getApplicationLabel", ApplicationInfo.class);
+
+            // Obtain ApplicationInfo for the package
+            ApplicationInfo appInfo = packageManager.getApplicationInfo(packageName, 0, 0);
+
+            // Invoke the getApplicationLabel method with ApplicationInfo
+            CharSequence label = (CharSequence) getApplicationLabelMethod.invoke(packageManager, appInfo);
+            return label;
+        } catch (Exception e) {
+            // Handle exceptions
+            XLog.e(TAG, "Error invoking getApplicationLabel: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public static Object getIPackageManager() {
+        try {
+            // Get the binder for the package service
+            IBinder binder = (IBinder) Class.forName("android.os.ServiceManager")
+                    .getMethod("getService", String.class)
+                    .invoke(null, "package");
+
+            // Get the IPackageManager interface using reflection
+            Class<?> stubClass = Class.forName("android.content.pm.IPackageManager$Stub");
+            Method asInterface = stubClass.getMethod("asInterface", IBinder.class);
+            // Invoke the asInterface method to get the IPackageManager instance
+            return asInterface.invoke(null, binder);
+        } catch (Exception e) {
+            // Handle exceptions
+            XLog.e(TAG, "Error getting Package Manager Interface via reflection: " + e.getMessage());
+            return null;
         }
     }
 

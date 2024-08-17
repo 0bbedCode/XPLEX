@@ -12,8 +12,23 @@ import androidx.annotation.RequiresApi;
 
 import com.obbedcode.shared.logger.XLog;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PkgUtils {
     private static final String TAG = "ObbedCode.XP.PkgUtils";
+
+    public static List<ApplicationInfo> getInstalledApplicationsCompat(IPackageManager pms, long flags, int userId) {
+        try {
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                return pms.getInstalledApplications(flags, userId).getList();
+            else
+                return pms.getInstalledApplications((int)flags, userId).getList();
+        }catch (Exception e) {
+            XLog.e(TAG, "[getInstalledApplicationsCompat] Error: " + e);
+            return new ArrayList<>();
+        }
+    }
 
     public static int getPackageUidCompat(IPackageManager pms, String packageName, long flags, int userId) {
         try {
@@ -21,7 +36,7 @@ public class PkgUtils {
             else if(Build.VERSION.SDK_INT == Build.VERSION_CODES.N) return pms.getPackageUid(packageName, (int)flags, userId);
             else return pms.getPackageUid(packageName, userId);
         }catch (RemoteException re) {
-            XLog.e(TAG, re);
+            XLog.e(TAG, "[getPackageUidCompat] Error: " + re);
             return 0;
         }
     }

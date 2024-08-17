@@ -8,7 +8,7 @@
     <string name="text_total_hooks">Hooks</string>
 
     <string name="text_core_status_good">Core Healthy</string>
-    <string name="text_core_status_good_message">Everything Looks good in XPLEX sit back and relax!</string>
+    <string name="text_core_status_good_message">Everything Looks good in XPL-EX sit back and relax!</string>
 
     <string name="text_core_status_warning">Core Warnings</string>
     <string name="text_core_status_warning_message">There seems to be some warnings within the XPLEX Core!</string>
@@ -16,7 +16,7 @@
     <string name="card_test_title">Core Tests</string>
     <string name="card_test_summary">Core tests to ensure Application is running at its best!</string>
 
-    <string name="card_welcome_title">Welcome to XPL-EX! v8</string>
+    <string name="card_welcome_title">Welcome to XPL-EX! v4</string>
     <string name="card_welcome_summary">Welcome:</string>
 
     <string name="text_test_root">Root Access</string>
