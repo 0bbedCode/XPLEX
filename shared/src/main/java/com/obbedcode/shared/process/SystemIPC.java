@@ -115,7 +115,6 @@ public class SystemIPC {
             }
 
             if(BuildRuntime.isSnowConeApi31Android12(true)) {
-                XLog.i(TAG, "Is Android 12 + Invoking Call now... UID:" + uid + " PKG: " + callingPackage + " MTH: " + method + " EXTRAS SIZE: " + extras.size());
                 AttributionSource attr = new AttributionSource.Builder(uid).setPackageName(callingPackage).build();
                 reply = provider.call(attr, providerAuthority, method, arg, extras);
             }
@@ -123,9 +122,8 @@ public class SystemIPC {
                 reply = provider.call(callingPackage, null, providerAuthority, method, arg, extras);
             else if(BuildRuntime.isQuinceTartApi29Android10())
                 reply = provider.call(callingPackage, providerAuthority, method, arg, extras);
-            else {
+            else
                 provider.call(callingPackage, method, arg, extras);
-            }
         }catch (Exception e) {
             XLog.e(TAG, "Failed to make a IPC Call: " + e.getMessage(), true, true);
         }
