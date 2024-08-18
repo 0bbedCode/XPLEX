@@ -31,6 +31,8 @@ public class UserService {
         //Verify Signature
         //Just return if signature does not match
 
+        //IF SERVICE IS NOT RUNNING Have waitForServiceBind handlers invoke all remove handlers things that needs service
+
         ServiceUtils.waitSystemService(Context.ACTIVITY_SERVICE);
         XLog.i(TAG, "Found the Activity Service", true);
         new UidProcessObserver(appUid)
@@ -38,6 +40,13 @@ public class UserService {
                 .setOnNotifyEvent((uid) -> {
                     if(uid != appUid) return;
                     XLog.i(TAG, "UID Observer Found UID: " + uid);
+
+                    try {
+                        XLog.i(TAG, "Invoking Test Site", true);
+                        String s = XplexService.instance.getLog();
+                        XLog.i(TAG, "Invoked Test Site, " + (s == null), true);
+                    }catch (Exception e) { XLog.e(TAG, "Error Invoking test site: " + e.getMessage(), true, true); }
+
                     try {
                         XLog.i(TAG, "Creating Service Bundle to send to the XPL-EX Client", true);
                         Bundle extras = new Bundle();

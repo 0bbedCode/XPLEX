@@ -1,42 +1,27 @@
 package com.obbedcode.xplex.hook;
 
 import android.annotation.SuppressLint;
-import android.app.ActivityManagerHidden;
-import android.content.AttributionSource;
-import android.content.IContentProvider;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.IPackageManager;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.RemoteException;
+import android.os.SystemClock;
 
-import com.obbedcode.shared.Constants;
-import com.obbedcode.shared.Str;
 import com.obbedcode.shared.hook.HookManager;
 import com.obbedcode.shared.logger.XLog;
-import com.obbedcode.shared.reflect.ReflectUtil;
-import com.obbedcode.shared.utils.PkgUtils;
-import com.obbedcode.xplex.BuildConfig;
+import com.obbedcode.shared.usage.ProcessCpuTracker;
+import com.obbedcode.shared.utils.ThreadUtils;
 import com.obbedcode.xplex.service.UserService;
-import com.obbedcode.xplex.service.XplexService;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
-import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
-import rikka.hidden.compat.ActivityManagerApis;
-import rikka.hidden.compat.adapter.UidObserverAdapter;
 
 public class HookAndroid {
     private static final String TAG = "ObbedCode.XP.HookAndroid";
 
     private static boolean hasFoundPackageService = false;
     private static final HookManager manager = new HookManager();
+
+
 
     public static void deployHook(final XC_LoadPackage.LoadPackageParam lpparam) {
         if("android".equals(lpparam.packageName)) {
@@ -58,6 +43,45 @@ public class HookAndroid {
                                 if(pms == null) {
                                     XLog.e(TAG, "Casting Param[1] to IPackageManager Interface failed", true, true);
                                     return;
+                                }
+
+                                try {
+                                    //https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/services/core/java/com/android/server/am/AppProfiler.java
+                                    new Thread(() -> {
+                                        XLog.i(TAG, "[CPU] Starting CPU stat Tracker...");
+                                        ProcessCpuTracker pc = new ProcessCpuTracker(false);
+                                        AtomicLong lastCpuTime = new AtomicLong(0);
+
+                                        XLog.i(TAG, "[CPU] CPU stat tracker Started now Starting loop for updates...");
+                                        // don't sample cpu less than every 5 seconds.
+                                        long MONITOR_CPU_MIN_TIME = 5 * 1000;
+
+                                        while (true) {
+                                            ThreadUtils.sleep(1200);
+                                            XLog.i(TAG, "[CPU] Updating CPU Stats... ");
+                                            final long now = SystemClock.uptimeMillis();
+                                            if(lastCpuTime.get() < (now - MONITOR_CPU_MIN_TIME)) {
+                                                lastCpuTime.set(now);
+                                                pc.update();
+                                                if(pc.hasGoodLastStats()) {
+                                                    XLog.i(TAG, "[CPU] Total Cpu usage: " + pc.getTotalCpuPercent());
+                                                    XLog.i(TAG, "[CPU] user: " + pc.getLastUserTime() +
+                                                            "\nSystem: " + pc.getLastSystemTime() +
+                                                            "\nIOWAIT: " + pc.getLastIoWaitTime() +
+                                                            "\nIRQ: " + pc.getLastIrqTime() +
+                                                            "\nSoftIrq: " + pc.getLastIrqTime() +
+                                                            "\nIdle: " + pc.getLastIdleTime());
+                                                } else {
+                                                    XLog.i(TAG, "[CPU] Last Stats were not good");
+                                                }
+                                            } else {
+                                                XLog.i(TAG, "[CPU] Last CPU Time is not less than NOW - MIN TIME");
+                                            }
+                                        }
+                                    }).start();
+
+                                }catch (Exception e) {
+                                    XLog.e(TAG, "Failed to execute ProcCpuTracker class: " + e.getMessage(), true, true);
                                 }
 
                                 hasFoundPackageService = true;

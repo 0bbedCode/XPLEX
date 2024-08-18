@@ -1,6 +1,7 @@
 package com.obbedcode.shared.utils;
 
 import android.app.ActivityManager;
+import android.app.ActivityManagerHidden;
 import android.content.Context;
 import android.os.Debug;
 import android.os.Process;
@@ -12,6 +13,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+
+import rikka.hidden.compat.ActivityManagerApis;
 
 public class UsageUtils {
     private static final String TAG = "ObbedCode.XP.UsageUtils";
@@ -28,6 +31,7 @@ public class UsageUtils {
             ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
             ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
             activityManager.getMemoryInfo(mi);
+
             double availableMegs = mi.availMem / 0x100000L;
             //Percentage can be calculated for API 16+
             double percentAvail = mi.availMem / (double)mi.totalMem * 100.0;

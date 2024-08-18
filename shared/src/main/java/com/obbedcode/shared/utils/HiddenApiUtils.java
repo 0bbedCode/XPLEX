@@ -120,6 +120,7 @@ public class HiddenApiUtils {
 
     public static Object getIActivityManager() {
         try {
+            ServiceUtils.waitSystemService(Context.ACTIVITY_SERVICE);
             IBinder binder = ServiceManager.getService(Context.ACTIVITY_SERVICE);
             Method asInterface = ReflectUtil.tryGetMethod("android.app.ActivityManagerNative", "asInterface", IBinder.class);
             return asInterface.invoke(null, binder);
