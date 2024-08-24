@@ -2,17 +2,13 @@ package com.obbedcode.xplex.hook;
 
 import android.annotation.SuppressLint;
 import android.content.pm.IPackageManager;
-import android.os.SystemClock;
 
 import com.obbedcode.shared.hook.HookManager;
 import com.obbedcode.shared.logger.XLog;
-import com.obbedcode.shared.usage.ProcessCpuTracker;
-import com.obbedcode.shared.utils.ThreadUtils;
 import com.obbedcode.xplex.service.UserService;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 public class HookAndroid {
@@ -45,45 +41,6 @@ public class HookAndroid {
                                     return;
                                 }
 
-                                try {
-                                    //https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/services/core/java/com/android/server/am/AppProfiler.java
-                                    new Thread(() -> {
-                                        XLog.i(TAG, "[CPU] Starting CPU stat Tracker...");
-                                        ProcessCpuTracker pc = new ProcessCpuTracker(false);
-                                        AtomicLong lastCpuTime = new AtomicLong(0);
-
-                                        XLog.i(TAG, "[CPU] CPU stat tracker Started now Starting loop for updates...");
-                                        // don't sample cpu less than every 5 seconds.
-                                        long MONITOR_CPU_MIN_TIME = 5 * 1000;
-
-                                        while (true) {
-                                            ThreadUtils.sleep(1200);
-                                            XLog.i(TAG, "[CPU] Updating CPU Stats... ");
-                                            final long now = SystemClock.uptimeMillis();
-                                            if(lastCpuTime.get() < (now - MONITOR_CPU_MIN_TIME)) {
-                                                lastCpuTime.set(now);
-                                                pc.update();
-                                                if(pc.hasGoodLastStats()) {
-                                                    XLog.i(TAG, "[CPU] Total Cpu usage: " + pc.getTotalCpuPercent());
-                                                    XLog.i(TAG, "[CPU] user: " + pc.getLastUserTime() +
-                                                            "\nSystem: " + pc.getLastSystemTime() +
-                                                            "\nIOWAIT: " + pc.getLastIoWaitTime() +
-                                                            "\nIRQ: " + pc.getLastIrqTime() +
-                                                            "\nSoftIrq: " + pc.getLastIrqTime() +
-                                                            "\nIdle: " + pc.getLastIdleTime());
-                                                } else {
-                                                    XLog.i(TAG, "[CPU] Last Stats were not good");
-                                                }
-                                            } else {
-                                                XLog.i(TAG, "[CPU] Last CPU Time is not less than NOW - MIN TIME");
-                                            }
-                                        }
-                                    }).start();
-
-                                }catch (Exception e) {
-                                    XLog.e(TAG, "Failed to execute ProcCpuTracker class: " + e.getMessage(), true, true);
-                                }
-
                                 hasFoundPackageService = true;
                                 manager.unHook("addService");
                                 XLog.i(TAG, "Found [package] pms Service now creating our Service ?", true);
@@ -106,6 +63,32 @@ public class HookAndroid {
                     }
                 });
 
+                @SuppressLint("PrivateApi")
+                Class<?> clazzSensor = Class.forName("com.android.server.SensorServer", false, lpparam.classLoader);
+
+
+                XposedBridge.hookAllMethods(clazzSensor, "startSensorServiceNative", new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        XLog.i(TAG, "SENSOR SERVICE NATIVE [startSensorServiceNative]", true);
+                        super.beforeHookedMethod(param);
+                    }
+                });
+
+                XposedBridge.hookAllMethods(clazzSensor, "registerRuntimeSensorNative", new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        try {
+                            int id = (int)param.args[1];
+                            String name = (String)param.args[3];
+                            String manf = (String)param.args[4];
+                            XLog.i(TAG, "SENSOR SERVICE [registerRuntimeSensorNative] ID:" + id + " NAME:" + name + " MANF: " + manf, true);
+                        }catch (Exception ignored) { }
+                        super.beforeHookedMethod(param);
+                    }
+                });
+
+                //XposedBridge.hookAllMethods(clazzSensor, )
 
                 //https://android.googlesource.com/platform/frameworks/base.git/+/master/core/java/com/android/internal/os/ZygoteInit.java
                 //com.android.server.am.ActivityManagerService [startProcessLocked] [startIsolatedProcess]

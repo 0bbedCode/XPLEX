@@ -4,7 +4,7 @@ import android.app.ActivityManager;
 
 import com.obbedcode.shared.logger.XLog;
 import com.obbedcode.shared.reflect.DynamicMethod;
-import com.obbedcode.shared.utils.HiddenApiUtils;
+import com.obbedcode.shared.reflect.ServicesGlobal;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -13,19 +13,9 @@ import java.io.IOException;
 public class MemoryApi {
     private static final String TAG = "ObbedCode.XP.MemoryApi";
 
-    private static Object amService = null;
-    private static DynamicMethod amGetMemoryInfo = null;
-
-    private static Object getAmService() {
-        if(amService == null) {
-            amService = HiddenApiUtils.getIActivityManager();
-            if(amService != null) {
-                amGetMemoryInfo = new DynamicMethod(amService.getClass(), "")
-            }
-        }
-
-        return amService;
-    }
+    private static final DynamicMethod internalGetMemoryInfo
+            = new DynamicMethod(ServicesGlobal.getIActivityManager().getClass(), "getMemoryInfo", ActivityManager.MemoryInfo.class)
+            .bindInstance(ServicesGlobal.getIActivityManager());
 
     /**
      * Retrieves the memory information of the system by reading from the /proc/meminfo file.
@@ -69,47 +59,57 @@ public class MemoryApi {
 
         ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
         String line;
-        boolean foundTotal = false;
-        boolean foundFree = false;
+        boolean gotTotal = false;
+        boolean gotFree = false;
+        boolean gotCached = false;
         try (BufferedReader reader = new BufferedReader(new FileReader("/proc/meminfo"))) {
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split("\\s+");
                 String name = parts[0];
-                long size = Long.parseLong(parts[1]) * 1024;  // Convert from kB to bytes
+                //* 1024 to Convert to MB
+                //NDK Specifies MemFree and Cached Tags only for [android_util_Process.cpp][android_os_Process_getFreeMemory]
+                //We can possibly also use "Buffers:" and "SwapFree:"
+                //https://cs.android.com/android/platform/superproject/+/android14-qpr3-release:frameworks/base/core/jni/android_util_Process.cpp;l=657?q=getFreeMemory
                 switch (name) {
                     case "MemTotal:":
-                        memoryInfo.totalMem = size;
-                        foundTotal = true;
+                        memoryInfo.totalMem = Long.parseLong(parts[1]) * 1024;
+                        gotTotal = true;
                         break;
                     case "MemFree:":
-                    case "Buffers:":
-                    case "Cached:":
-                        memoryInfo.availMem += size;
-                        foundFree = true;
+                        memoryInfo.availMem += Long.parseLong(parts[1]) * 1024;
+                        gotFree = true;
                         break;
-                    //case "SwapTotal:":
-                    //    memoryInfo.totalSwap = size;
-                    //    break;
-                    //case "SwapFree:":
-                    //    memoryInfo.freeSwap = size;
-                    //    break;
+                    case "Cached:":
+                        memoryInfo.availMem += Long.parseLong(parts[1]) * 1024;
+                        gotCached = true;
+                        break;
                 }
 
-                if(foundTotal && foundFree)
+                if(gotTotal && gotFree && gotCached)
                     break;
             }
 
-            // Optionally set other fields like threshold or lowMemory
-            //memoryInfo.threshold = memoryInfo.totalMem / 10;  // Set an example threshold
+            //This crap is optional
+            //memoryInfo.threshold = (long) (memoryInfo.totalMem * 0.15);
             //memoryInfo.lowMemory = memoryInfo.availMem < memoryInfo.threshold;
-            //Finish rest if wanted
-
         } catch (IOException e) { XLog.e(TAG, "Error reading the Memory File [/proc/meminfo]"); }
         return memoryInfo;
     }
 
+    /**
+     * Using the Activity Manager Service return a Instance of MemoryInfo
+     *
+     * <p> Do note while this returns a Structure for MemoryInfo its best to direct read from the File as that's what happens in the end /proc/meminfo
+     * Using getMemoryInfoFromProc() will directly read from the meminfo file
+     *
+     * @return ActivityManager.MemoryInfo populated with memory statistics from ActivityManager.getMemoryInfo
+     *         Returns a MemoryInfo structure with default values in case of an error.
+     *
+     * @see android.app.ActivityManager.MemoryInfo
+     */
     public static ActivityManager.MemoryInfo getMemoryInfoFromService() {
-        Object amService = getAmService();
-
+        ActivityManager.MemoryInfo avm = new ActivityManager.MemoryInfo();
+        internalGetMemoryInfo.tryInstanceInvoke(avm);
+        return avm;
     }
 }

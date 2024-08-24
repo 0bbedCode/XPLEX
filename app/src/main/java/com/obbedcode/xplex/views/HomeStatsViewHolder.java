@@ -12,12 +12,14 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.obbedcode.shared.IXPService;
 import com.obbedcode.shared.logger.XLog;
 import com.obbedcode.shared.utils.ThreadUtils;
 import com.obbedcode.shared.utils.UsageUtils;
 import com.obbedcode.xplex.R;
 import com.obbedcode.xplex.databinding.MainCardContainerBinding;
 import com.obbedcode.xplex.databinding.MainCardStatsBinding;
+import com.obbedcode.xplex.service.ServiceClient;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -53,34 +55,65 @@ public class HomeStatsViewHolder extends BaseViewHolder<Object> {
         super(itemView);
         //double ramProgress = UsageUtils.getMemoryUsage(getContext());
         //int ramProgressNum = (int)Math.round(ramProgress);
-        final ProgressBar pb = itemView.findViewById(R.id.ram_progress_bar);
-        final TextView tv = itemView.findViewById(R.id.ram_progress_text);
+        final ProgressBar pbRam = itemView.findViewById(R.id.ram_progress_bar);
+        final TextView tvRam = itemView.findViewById(R.id.ram_progress_text);
+
+        final ProgressBar pbCpu = itemView.findViewById(R.id.cpu_progress_bar);
+        final TextView tvCpu = itemView.findViewById(R.id.cpu_progress_text);
 
         //pb.setProgress(ramProgressNum);
         //tv.setText(String.valueOf(ramProgressNum));
 
-        /*executorService.submit(() -> {
+        executorService.submit(() -> {
+
+            boolean did = false;
+
             while (errorTimes < 50) {
                 try {
                     while (errorTimes < 50) {
-                        //Thread.sleep(1500);
                         ThreadUtils.sleep(1500);
-                        int ramProgress = (int)Math.round(UsageUtils.getMemoryUsage(getContext()));
-                        String ramProgressStr = String.valueOf(ramProgress);
+                        IXPService serv = ServiceClient.waitForService();
+                        if(serv != null) {
+                            if(!did) {
+                                did = true;
+                                XLog.i(TAG, "Running a get Process List Test");
+                                serv.getRunningProcesses();
+                            }
+
+                            int ramUsage = (int)Math.round(serv.getOverallMemoryUsage());
+                            int cpuUsage = (int)Math.round(serv.getOverallCpuUsage());
+
+                            String ramUsageStr = String.valueOf(ramUsage);
+                            String cpuUsageStr = String.valueOf(cpuUsage);
+
+                            new Handler(Looper.getMainLooper()).post(() -> {
+                               pbRam.setProgress(ramUsage);
+                               tvRam.setText(ramUsageStr);
+
+                               pbCpu.setProgress(cpuUsage);
+                               tvCpu.setText(cpuUsageStr);
+                            });
+                        }
+
+
+                        //Thread.sleep(1500);
+                        //ThreadUtils.sleep(1500);
+                        //int ramProgress = (int)Math.round(UsageUtils.getMemoryUsage(getContext()));
+                        //String ramProgressStr = String.valueOf(ramProgress);
 
                         //int cpuProgress = (int)Math.round(UsageUtils.getOverallCpuUsage());
 
-                        new Handler(Looper.getMainLooper()).post(() -> {
-                            pb.setProgress(ramProgress);
-                            tv.setText(ramProgressStr);
-                        });
+                        //new Handler(Looper.getMainLooper()).post(() -> {
+                        //    pb.setProgress(ramProgress);
+                        //    tv.setText(ramProgressStr);
+                        //});
                     }
                 }catch (Exception e) {
                     errorTimes++;
                     XLog.e(TAG, "Stats Grabbing error: " + e);
                 }
             }
-        });*/
+        });
 
     }
 }

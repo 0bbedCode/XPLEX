@@ -13,6 +13,8 @@ import com.obbedcode.shared.IXPService;
 import com.obbedcode.shared.IXplexService;
 import com.obbedcode.shared.data.XApp;
 import com.obbedcode.shared.logger.XLog;
+import com.obbedcode.shared.usage.RunningProcess;
+import com.obbedcode.shared.utils.ThreadUtils;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -25,6 +27,12 @@ import java.util.List;
 public class ServiceClient extends IXPService.Stub implements IBinder.DeathRecipient {
     private static final String TAG = "ObbedCode.XP.ServiceClient";
     private static IXPService service;
+
+    public static IXPService waitForService() {
+        while (service == null)
+            ThreadUtils.sleep(1200);
+        return service;
+    }
 
     private static class ServiceProxy implements InvocationHandler {
         private final IXPService obj;
@@ -68,8 +76,21 @@ public class ServiceClient extends IXPService.Stub implements IBinder.DeathRecip
     }
 
     @Override
+    public List<RunningProcess> getRunningProcesses()  throws RemoteException { return service.getRunningProcesses(); }
+
+    @Override
     public String getLog() throws RemoteException {
         return "";
+    }
+
+    @Override
+    public double getOverallCpuUsage() throws RemoteException {
+        return service.getOverallCpuUsage();
+    }
+
+    @Override
+    public double getOverallMemoryUsage() throws RemoteException {
+        return service.getOverallMemoryUsage();
     }
 
     @Override

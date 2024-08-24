@@ -4,11 +4,7 @@ import android.app.Application;
 import android.util.Log;
 
 import com.obbedcode.shared.logger.XLog;
-import com.obbedcode.shared.utils.HiddenApiUtils;
-import com.obbedcode.xplex.hook.XposedEntry;
 import com.obbedcode.xplex.root.RootManager;
-
-import de.robv.android.xposed.XposedBridge;
 
 public class XplexApplication extends Application {
     private static final String TAG = "ObbedCode.XplexApplication";

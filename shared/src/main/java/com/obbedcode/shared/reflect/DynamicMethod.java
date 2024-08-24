@@ -21,6 +21,8 @@ public class DynamicMethod {
 
     public DynamicMethod bindInstance(Object instance) { this.mInstance = instance; return this; }
 
+    public Object getInstance() { return this.mInstance; }
+
     public DynamicMethod setAccessible(boolean accessible) {
         try {
             this.mMethod.setAccessible(accessible);

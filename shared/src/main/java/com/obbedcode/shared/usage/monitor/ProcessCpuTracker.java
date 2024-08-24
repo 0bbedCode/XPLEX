@@ -1,4 +1,4 @@
-package com.obbedcode.shared.usage;
+package com.obbedcode.shared.usage.monitor;
 
 import android.os.SystemClock;
 import android.util.proto.ProtoOutputStream;
@@ -39,6 +39,11 @@ import android.system.OsConstants;
 
 //import com.android.internal.util.FastPrintWriter;
 
+import com.obbedcode.shared.logger.XLog;
+import com.obbedcode.shared.usage.ProcessApi;
+import com.obbedcode.shared.usage.ProcessUtils;
+import com.obbedcode.shared.utils.ThreadUtils;
+
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -46,8 +51,45 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class ProcessCpuTracker {
+    public static void exampleUsage() {
+        //https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/services/core/java/com/android/server/am/AppProfiler.java
+        new Thread(() -> {
+            XLog.i(TAG, "[CPU] Starting CPU stat Tracker...");
+            ProcessCpuTracker pc = new ProcessCpuTracker(false);
+            AtomicLong lastCpuTime = new AtomicLong(0);
+
+            XLog.i(TAG, "[CPU] CPU stat tracker Started now Starting loop for updates...");
+            // don't sample cpu less than every 5 seconds.
+            long MONITOR_CPU_MIN_TIME = 5 * 1000;
+
+            while (true) {
+                ThreadUtils.sleep(1200);
+                XLog.i(TAG, "[CPU] Updating CPU Stats... ");
+                final long now = SystemClock.uptimeMillis();
+                if(lastCpuTime.get() < (now - MONITOR_CPU_MIN_TIME)) {
+                    lastCpuTime.set(now);
+                    pc.update();
+                    if(pc.hasGoodLastStats()) {
+                        XLog.i(TAG, "[CPU] Total Cpu usage: " + pc.getTotalCpuPercent());
+                        XLog.i(TAG, "[CPU] user: " + pc.getLastUserTime() +
+                                "\nSystem: " + pc.getLastSystemTime() +
+                                "\nIOWAIT: " + pc.getLastIoWaitTime() +
+                                "\nIRQ: " + pc.getLastIrqTime() +
+                                "\nSoftIrq: " + pc.getLastIrqTime() +
+                                "\nIdle: " + pc.getLastIdleTime());
+                    } else {
+                        XLog.i(TAG, "[CPU] Last Stats were not good");
+                    }
+                } else {
+                    XLog.i(TAG, "[CPU] Last CPU Time is not less than NOW - MIN TIME");
+                }
+            }
+        }).start();
+    }
+
     private static final String TAG = "ProcessCpuTracker";
     private static final boolean DEBUG = false;
     private static final boolean localLOGV = DEBUG || false;
@@ -985,7 +1027,7 @@ public class ProcessCpuTracker {
                 || st.name.equals("<pre-initialized>")
                 || st.name.equals("usap32")
                 || st.name.equals("usap64")) {
-            String cmdName = ProcessStatsUtil.readTerminatedProcFile(cmdlineFile, (byte) '\0');
+            String cmdName = ProcessUtils.readTerminatedProcFile(cmdlineFile, (byte) '\0');
             if (cmdName != null && cmdName.length() > 1) {
                 newName = cmdName;
                 int i = newName.lastIndexOf("/");

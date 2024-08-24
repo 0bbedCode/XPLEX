@@ -1,34 +1,17 @@
 package com.obbedcode.shared.process;
 
-import android.annotation.SuppressLint;
-import android.app.ActivityManagerHidden;
 import android.app.ActivityThread;
-import android.app.Application;
 import android.os.Build;
-import android.os.FileObserver;
 import android.os.Process;
 
-import androidx.annotation.Nullable;
-
-import com.obbedcode.shared.BuildRuntime;
 import com.obbedcode.shared.logger.XLog;
-import com.obbedcode.shared.reflect.DynamicMethod;
-import com.obbedcode.shared.utils.HiddenApiUtils;
 import com.obbedcode.shared.utils.StreamUtils;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.List;
 
-import de.robv.android.xposed.XposedHelpers;
-import rikka.hidden.compat.ActivityManagerApis;
 import rikka.hidden.compat.PackageManagerApis;
 
 public class ProcHelper {

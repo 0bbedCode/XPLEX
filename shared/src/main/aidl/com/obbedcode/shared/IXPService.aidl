@@ -5,6 +5,8 @@ package com.obbedcode.shared;
 import com.obbedcode.shared.data.XApp;
 import com.obbedcode.shared.data.XApp;
 
+import com.obbedcode.shared.usage.RunningProcess;
+
 interface IXPService {
     /**
      * Demonstrates some basic types that you can use as parameters
@@ -16,6 +18,11 @@ interface IXPService {
     String getLog();
 
     List<XApp> getInstalledAppsEx();
+
+    double getOverallCpuUsage();
+    double getOverallMemoryUsage();
+
+    List<RunningProcess> getRunningProcesses();
 
     //How can I add to my interface a more advance type like
     //List<XApp> XApp being (com.obbedcode.shared.data.XApp)

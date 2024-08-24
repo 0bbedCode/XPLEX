@@ -1,23 +1,12 @@
 package com.obbedcode.shared.data;
 
-import android.app.ActivityManagerNative;
 import android.app.ActivityThread;
-import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.IPackageManager;
-import android.content.pm.PackageItemInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManagerHidden;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import androidx.annotation.NonNull;
-
-import com.obbedcode.shared.api.ApplicationApi;
 import com.obbedcode.shared.logger.XLog;
-import com.obbedcode.shared.utils.HiddenApiUtils;
-
-import rikka.hidden.compat.PackageManagerApis;
 
 public class XApp implements Parcelable {
     private static final String TAG = "ObbedCode.XP.XApp";

@@ -1,4 +1,4 @@
-package com.obbedcode.shared.utils;
+package com.obbedcode.shared.reflect;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
@@ -11,7 +11,7 @@ import android.util.Log;
 
 import com.obbedcode.shared.BuildRuntime;
 import com.obbedcode.shared.logger.XLog;
-import com.obbedcode.shared.reflect.ReflectUtil;
+import com.obbedcode.shared.utils.ServiceUtils;
 
 import org.lsposed.hiddenapibypass.HiddenApiBypass;
 

@@ -3,30 +3,18 @@ package com.obbedcode.shared.process;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.ActivityManagerHidden;
-import android.app.ActivityManagerNative;
-import android.app.IActivityManager;
-import android.app.IUidObserver;
-import android.content.Context;
+import android.os.Binder;
 import android.os.Build;
-import android.os.FileObserver;
-import android.os.IBinder;
+import android.os.Process;
 import android.os.RemoteException;
-import android.os.ServiceManager;
-import android.util.Log;
-
-import androidx.annotation.Nullable;
 
 import com.obbedcode.shared.logger.XLog;
 import com.obbedcode.shared.reflect.DynamicMethod;
-import com.obbedcode.shared.reflect.ReflectUtil;
 import com.obbedcode.shared.utils.CollectionUtils;
-import com.obbedcode.shared.utils.HiddenApiUtils;
+import com.obbedcode.shared.reflect.HiddenApiUtils;
+import com.obbedcode.shared.utils.RuntimeUtils;
 import com.obbedcode.shared.utils.ThreadUtils;
-import com.topjohnwu.superuser.Shell;
 
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -76,6 +64,9 @@ public class UidProcessObserver {
             if(mUseOldMethod) {
                 try {
                     Object am = HiddenApiUtils.getIActivityManager();
+                    //3zUv58tDHGWAeLBHZ6fq54tk8Z1e66ryqiB8tgNeCqtC
+                    //Object am = HiddenApiUtils.getIActivityManager();
+
                     if(am == null) {
                         mKeepMonitoring = false;
                         XLog.e(TAG, "Failed to Get IActivity Manager Class Interface...", true, true);

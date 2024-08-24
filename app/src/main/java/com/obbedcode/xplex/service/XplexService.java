@@ -12,6 +12,10 @@ import com.obbedcode.shared.IXplexService;
 import com.obbedcode.shared.api.XposedApi;
 import com.obbedcode.shared.data.XApp;
 import com.obbedcode.shared.logger.XLog;
+import com.obbedcode.shared.usage.MemoryApi;
+import com.obbedcode.shared.usage.ProcessApi;
+import com.obbedcode.shared.usage.RunningProcess;
+import com.obbedcode.shared.usage.UsageUtils;
 import com.obbedcode.shared.utils.PkgUtils;
 import com.obbedcode.shared.utils.RuntimeUtils;
 import com.obbedcode.xplex.hook.TestSite;
@@ -46,13 +50,30 @@ public class XplexService extends IXPService.Stub {
     }
 
     @Override
+    public double getOverallCpuUsage() throws RemoteException {
+        long[] vals = new long[7];
+        if(ProcessApi.readProcFile(UsageUtils.PROC_STAT_FILE, ProcessApi.SYSTEM_CPU_FORMAT, null, vals, null)) {
+            return UsageUtils.calculateCpuUsage(
+                    vals[0],
+                    vals[1],
+                    vals[2],
+                    vals[3],
+                    vals[4],
+                    vals[5],
+                    vals[6]);
+        }
+        return 0;
+    }
+
+    @Override
+    public double getOverallMemoryUsage() throws RemoteException { return UsageUtils.calculateMemoryUsage(MemoryApi.getMemoryInfoFromService()); }
+
+    @Override
     public List<XApp> getInstalledAppsEx() throws RemoteException {
         XLog.i(TAG, "zer0def for TaiChi Support");
         List<XApp> apps = new ArrayList<>();
         try {
-            XLog.i(TAG, "Getting Installed Apps...");
             List<ApplicationInfo> pkgInfos = PkgUtils.getInstalledApplicationsCompat(packageManager,0, 0);
-            XLog.i(TAG, "Installed Apps Size: " + pkgInfos.size() + " Stack\n" + RuntimeUtils.getStackTraceSafeString());
             for(ApplicationInfo ai : pkgInfos) {
                 XApp app = new XApp(ai, packageManager);
                 apps.add(app);
@@ -60,5 +81,10 @@ public class XplexService extends IXPService.Stub {
         }catch (Exception e) {
             XLog.e(TAG, "Failed to Get a List of Installed Apps on the Device, Service Error: " + e.getMessage(), true);
         } return apps;
+    }
+
+    @Override
+    public List<RunningProcess> getRunningProcesses() throws RemoteException {
+        return RunningProcess.getRunningProcesses(true);
     }
 }

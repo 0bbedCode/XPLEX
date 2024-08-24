@@ -1,11 +1,7 @@
 package com.obbedcode.shared.reflect;
 
+import android.os.Process;
 import android.util.Log;
-
-import com.obbedcode.shared.logger.XLog;
-import com.obbedcode.shared.utils.HiddenApiUtils;
-
-import org.lsposed.hiddenapibypass.HiddenApiBypass;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -14,6 +10,19 @@ import java.lang.reflect.Method;
 
 public class ReflectUtil {
     private static final String TAG = "ObbedCode.XP.ReflectUtil";
+
+
+    public static int useFieldValueOrDefaultInt(String fieldName, int defaultValue) {
+        DynamicField field = new DynamicField(Process.class, fieldName).setAccessible(true);
+        if(!field.isValid()) return defaultValue;
+        Object val = field.tryGetValueStatic();
+        if(val == null) return defaultValue;
+        try {
+            if(val instanceof Integer)
+                return (int)val;
+        }catch (ClassCastException ignored) { }
+        return defaultValue;
+    }
 
     public static void initHiddenApiEx() {
         try {

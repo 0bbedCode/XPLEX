@@ -22,9 +22,7 @@ public class UsageUtils {
      * @param memInfo Structure for Memory Info holding Avail memory and Total Memory
      * @return The overall Memory Usage
      */
-    public static double calculateMemoryUsage(ActivityManager.MemoryInfo memInfo) {
-        return calculateMemoryUsage(memInfo.availMem, memInfo.totalMem);
-    }
+    public static double calculateMemoryUsage(ActivityManager.MemoryInfo memInfo) { return calculateMemoryUsage(memInfo.totalMem, memInfo.availMem); }
 
     /**
      * Calculates the total Memory Usage

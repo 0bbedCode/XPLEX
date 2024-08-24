@@ -6,7 +6,7 @@ import com.obbedcode.shared.logger.XLog;
 import com.obbedcode.shared.reflect.ReflectUtil;
 import com.obbedcode.shared.usage.ProcessUtils;
 import com.obbedcode.shared.usage.ProcessApi;
-import com.obbedcode.shared.utils.HiddenApiUtils;
+import com.obbedcode.shared.reflect.HiddenApiUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

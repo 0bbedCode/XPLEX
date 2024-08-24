@@ -3,6 +3,7 @@ package com.obbedcode.shared.utils;
 import android.util.Log;
 
 import com.obbedcode.shared.reflect.DynamicMethod;
+import com.obbedcode.shared.reflect.HiddenApiUtils;
 import com.obbedcode.shared.reflect.ReflectUtil;
 
 public class RuntimeUtils {
