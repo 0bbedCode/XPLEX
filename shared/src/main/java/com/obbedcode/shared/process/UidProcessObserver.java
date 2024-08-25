@@ -130,7 +130,6 @@ public class UidProcessObserver {
                 if(Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
                     try {
                         XLog.i(TAG, "Starting UidObserver from Activity Manager UID: " + mUid, true);
-                        //this keeps throwing some fucking remote exception no matter what not here but else where
                         mUidObserverAdapter = new UidObserverAdapter() {
                             @Override
                             public void onUidActive(int uid) throws RemoteException {
