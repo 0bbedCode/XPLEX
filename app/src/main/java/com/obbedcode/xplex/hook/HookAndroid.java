@@ -1,10 +1,13 @@
 package com.obbedcode.xplex.hook;
 
 import android.annotation.SuppressLint;
+import android.app.IUidObserver;
 import android.content.pm.IPackageManager;
+import android.os.RemoteCallbackList;
 
 import com.obbedcode.shared.hook.HookManager;
 import com.obbedcode.shared.logger.XLog;
+import com.obbedcode.shared.utils.RuntimeUtils;
 import com.obbedcode.xplex.service.UserService;
 
 import de.robv.android.xposed.XC_MethodHook;
@@ -63,11 +66,11 @@ public class HookAndroid {
                     }
                 });
 
-                @SuppressLint("PrivateApi")
-                Class<?> clazzSensor = Class.forName("com.android.server.SensorServer", false, lpparam.classLoader);
+                //@SuppressLint("PrivateApi")
+                //Class<?> clazzSensor = Class.forName("com.android.server.SensorServer", false, lpparam.classLoader);
 
 
-                XposedBridge.hookAllMethods(clazzSensor, "startSensorServiceNative", new XC_MethodHook() {
+                /*XposedBridge.hookAllMethods(clazzSensor, "startSensorServiceNative", new XC_MethodHook() {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         XLog.i(TAG, "SENSOR SERVICE NATIVE [startSensorServiceNative]", true);
@@ -86,7 +89,7 @@ public class HookAndroid {
                         }catch (Exception ignored) { }
                         super.beforeHookedMethod(param);
                     }
-                });
+                });*/
 
                 //XposedBridge.hookAllMethods(clazzSensor, )
 

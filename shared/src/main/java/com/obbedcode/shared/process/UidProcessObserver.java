@@ -10,6 +10,7 @@ import android.os.RemoteException;
 
 import com.obbedcode.shared.logger.XLog;
 import com.obbedcode.shared.reflect.DynamicMethod;
+import com.obbedcode.shared.reflect.ReflectUtil;
 import com.obbedcode.shared.utils.CollectionUtils;
 import com.obbedcode.shared.reflect.HiddenApiUtils;
 import com.obbedcode.shared.utils.RuntimeUtils;
@@ -25,17 +26,18 @@ import rikka.hidden.compat.adapter.UidObserverAdapter;
 public class UidProcessObserver {
     private static final String TAG = "ObbedCode.XP.UidProcessObserver";
 
-    public static final int UID_OBSERVER_OLD_KIND = 0x1;
-    public static final int UID_OBSERVER_AM_KIND = 0x2;
-    public static final int UID_OBSERVER_PROC_KIND = 0x3;
+    /*
+    *   Use this method to Init Fields as using rikka.hidden.compat ActivityManagerHidden Does not return Proper Field Values
+    *   ActivityManagerHidden.UID_OBSERVER_ACTIVE or ActivityManagerHidden.PROCESS_STATE_UNKNOWN both always Return (0)
+    *   Despite SDK being checked for 24+ and Running on 31+ Still returns (0) So instead we try to grab field Value Dynamically else use a Hard Coded Value from Android Source
+    *   Found this out by hooking ActivityManagerServer.registerUidObserverForUids() / UidObserverController.register() Seeing (HMA) Passes Which (8) and Cutpoint (-1) but for me its (0) and (0)
+    */
+    public static final int UID_OBSERVER_ACTIVE = ReflectUtil.useFieldValueOrDefaultInt(ActivityManager.class,"UID_OBSERVER_ACTIVE", 1<<3);
+    public static final int PROCESS_STATE_UNKNOWN = ReflectUtil.useFieldValueOrDefaultInt(ActivityManager.class, "PROCESS_STATE_UNKNOWN", -1);
 
-    private final ExecutorService mExecutorService = Executors.newFixedThreadPool(5);
     private int mUid = 0;
-
     private boolean mUseOldMethod = false;
     private UidObserverAdapter mUidObserverAdapter = null;
-
-
     private INotifyUid mNotifyUidEvent;
     private boolean mKeepMonitoring = false;
 
@@ -44,6 +46,7 @@ public class UidProcessObserver {
     public UidProcessObserver useOldMethod(boolean useOld) { this.mUseOldMethod = useOld; return this; }
     public UidProcessObserver setOnNotifyEvent(INotifyUid notifyEvent) { this.mNotifyUidEvent = notifyEvent; return this; }
 
+    @SuppressWarnings("unused")
     public void stopMonitorOnActive() {
         mKeepMonitoring = false;
         if(mUidObserverAdapter != null) {
@@ -54,9 +57,10 @@ public class UidProcessObserver {
         }
     }
 
+    @SuppressWarnings("unused")
     public void startMonitorOnActive() { startMonitorOnActive(true); }
 
-    @SuppressLint("NewApi")
+    @SuppressWarnings("unused")
     public void startMonitorOnActive(boolean stopWhenFound) {
         if(!mKeepMonitoring) {
             mKeepMonitoring = true;
@@ -64,9 +68,6 @@ public class UidProcessObserver {
             if(mUseOldMethod) {
                 try {
                     Object am = HiddenApiUtils.getIActivityManager();
-                    //3zUv58tDHGWAeLBHZ6fq54tk8Z1e66ryqiB8tgNeCqtC
-                    //Object am = HiddenApiUtils.getIActivityManager();
-
                     if(am == null) {
                         mKeepMonitoring = false;
                         XLog.e(TAG, "Failed to Get IActivity Manager Class Interface...", true, true);
@@ -141,17 +142,15 @@ public class UidProcessObserver {
                                         mKeepMonitoring = false;
                                 }
 
-                                XLog.i(TAG, "UID FALSE: " + uid, true);
-                                if(!mKeepMonitoring)
-                                    ActivityManagerApis.unregisterUidObserver(this);
+                                if(!mKeepMonitoring) ActivityManagerApis.unregisterUidObserver(this);
                             }
                         };
 
                         XLog.i(TAG, "Registering the UID Observer for Activity Manager UID: " + mUid, true);
                         ActivityManagerApis.registerUidObserver(
                                 mUidObserverAdapter,
-                                ActivityManagerHidden.UID_OBSERVER_ACTIVE,
-                                ActivityManagerHidden.PROCESS_STATE_UNKNOWN,
+                                UID_OBSERVER_ACTIVE,
+                                PROCESS_STATE_UNKNOWN,
                                 null);
                     }catch (Exception e) {
                         mKeepMonitoring = false;

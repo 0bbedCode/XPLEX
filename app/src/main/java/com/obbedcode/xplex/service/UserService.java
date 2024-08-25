@@ -2,6 +2,7 @@ package com.obbedcode.xplex.service;
 
 import android.content.Context;
 import android.content.pm.IPackageManager;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.Process;
 
@@ -26,7 +27,7 @@ public class UserService {
         XplexService.bind(pms);
         //PS We bind here the Package Manager Service so in theory we can cut context from the Interface ??
         appUid = PkgUtils.getPackageUidCompat(pms, Constants.APP_PACKAGE_NAME, 0, 0);
-        XLog.i(TAG, "XPL-EX Application Uid: " + appUid, true);
+        XLog.i(TAG, "XPL-EX Application Uid: " + appUid + " Calling UID: " + Binder.getCallingUid(), true);
         //PackageInfo pkgInfo = PkgUtils.getPackageInfoCompat(pms, Constants.APP_PACKAGE_NAME, 0, 0);
         //Verify Signature
         //Just return if signature does not match
@@ -34,7 +35,7 @@ public class UserService {
         ServiceUtils.waitSystemService(Context.ACTIVITY_SERVICE);
         XLog.i(TAG, "Found the Activity Service", true);
         new UidProcessObserver(appUid)
-                .useOldMethod(true)
+                .useOldMethod(false)
                 .setOnNotifyEvent((uid) -> {
                     if(uid != appUid) return;
                     XLog.i(TAG, "UID Observer Found UID: " + uid);

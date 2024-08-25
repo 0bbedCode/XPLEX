@@ -31,7 +31,7 @@ public class TestXluaFolderViewHolder extends CoreTestBaseViewHolder {
     @Override
     public boolean executeTest() {
         try {
-            return new File(DirectoryUtils.getOldDirectory()).exists();
+            return new File(DirectoryUtils.getOldDirectory()).isDirectory();
         } catch (Exception e) {
             setLastMessage(e.getMessage());
             return false;

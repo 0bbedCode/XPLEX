@@ -3,6 +3,8 @@ package com.obbedcode.shared.usage;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.obbedcode.shared.Str;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,6 +69,69 @@ public class ProcStatus {
     public static final String STATUS_NON_VOLUNTARY_CTX_SWITCHES = "nonvoluntary_ctxt_switches";
 
     @NonNull
+    private final Map<String, String> mStatus;
+    private ProcStatus(@NonNull Map<String, String> status) {
+        mStatus = status;
+    }
+
+    @SuppressWarnings("unused")
+    public int getUid() { return Integer.decode(Str.getFirstElementIsNumber(getElements(STATUS_UID), "0")); }
+
+    @SuppressWarnings("unused")
+    public int getGid() { return Integer.decode(Str.getFirstElementIsNumber(getElements(STATUS_GID), "0")); }
+
+    @SuppressWarnings("unused")
+    public int getPid() {  return Integer.decode(Str.getFirstElementIsNumber(getElements(STATUS_PID), "0")); }
+
+    @SuppressWarnings("unused")
+    public int getParentPid() {  return Integer.decode(Str.getFirstElementIsNumber(getElements(STATUS_PPID), "0")); }
+
+    @SuppressWarnings("unused")
+    public int getThreads() {  return Integer.decode(Str.getFirstElementIsNumber(getElements(STATUS_THREADS), "0")); }
+
+    @SuppressWarnings("unused")
+    public int getThreadGroupId() {  return Integer.decode(Str.getFirstElementIsNumber(getElements(STATUS_TGID), "0")); }
+
+    @SuppressWarnings("unused")
+    public int getNetworkGroupId() {  return Integer.decode(Str.getFirstElementIsNumber(getElements(STATUS_NGID), "0")); }
+
+    @SuppressWarnings("unused")
+    public int getTracerPid() {  return Integer.decode(Str.getFirstElementIsNumber(getElements(STATUS_TRACER_PID), "0")); }
+
+    @SuppressWarnings("unused")
+    public int getUmask() {  return Integer.decode(Str.getFirstElementIsNumber(getElements(STATUS_UMASK), "0")); }
+
+    @SuppressWarnings("unused")
+    public String getName() { return getString(STATUS_NAME); }
+
+    @SuppressWarnings("unused")
+    public String getState() { return getString(STATUS_STATE); }
+
+    @SuppressWarnings("unused")
+    public String[] getElements(@NonNull String key) {
+        String line = getString(key);
+        if(line == null) return new String[] { "" };
+        return line.split("\\s+");
+    }
+
+    @Nullable
+    public String getString(@NonNull String key) {
+        return mStatus.get(key);
+    }
+
+    @SuppressWarnings("unused")
+    public int getInteger(@NonNull String key, int defaultValue) {
+        String string = getString(key);
+        return string != null ? Integer.decode(string) : defaultValue;
+    }
+
+    @SuppressWarnings("unused")
+    public long getLong(@NonNull String key, long defaultValue) {
+        String string = getString(key);
+        return string != null ? Long.decode(string) : defaultValue;
+    }
+
+    @NonNull
     public static ProcStatus parse(@NonNull String data) {
         Map<String, String> result = new HashMap<>(56);
         for (String line : data.split("\\n")) {
@@ -76,27 +141,5 @@ public class ProcStatus {
             }
         }
         return new ProcStatus(result);
-    }
-
-    @NonNull
-    private final Map<String, String> mStatus;
-
-    private ProcStatus(@NonNull Map<String, String> status) {
-        mStatus = status;
-    }
-
-    @Nullable
-    public String getString(@NonNull String key) {
-        return mStatus.get(key);
-    }
-
-    public int getInteger(@NonNull String key, int defaultValue) {
-        String string = getString(key);
-        return string != null ? Integer.decode(string) : defaultValue;
-    }
-
-    public long getLong(@NonNull String key, long defaultValue) {
-        String string = getString(key);
-        return string != null ? Long.decode(string) : defaultValue;
     }
 }

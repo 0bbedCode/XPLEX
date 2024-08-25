@@ -62,16 +62,16 @@ public class ProcessApi {
     //https://android.googlesource.com/platform/frameworks/base/+/android-6.0.0_r1/core/java/android/os/Process.java
     //https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/core/java/com/android/internal/os/ProcessCpuTracker.java
 
-    public static final int PROC_TERM_MASK = ReflectUtil.useFieldValueOrDefaultInt("PROC_TERM_MASK", 0xff);
-    public static final int PROC_ZERO_TERM =  ReflectUtil.useFieldValueOrDefaultInt("PROC_ZERO_TERM", 0);
+    public static final int PROC_TERM_MASK = ReflectUtil.useFieldValueOrDefaultInt(Process.class,"PROC_TERM_MASK", 0xff);
+    public static final int PROC_ZERO_TERM =  ReflectUtil.useFieldValueOrDefaultInt(Process.class,"PROC_ZERO_TERM", 0);
     public static final int PROC_SPACE_TERM = (int)' '; //32
     public static final int PROC_TAB_TERM = (int)'\t';
-    public static final int PROC_COMBINE =  ReflectUtil.useFieldValueOrDefaultInt("PROC_COMBINE", 0x100);
-    public static final int PROC_PARENS =  ReflectUtil.useFieldValueOrDefaultInt("PROC_PARENS", 0x200);
-    public static final int PROC_QUOTES =  ReflectUtil.useFieldValueOrDefaultInt("PROC_QUOTES", 0x400);
-    public static final int PROC_OUT_STRING =  ReflectUtil.useFieldValueOrDefaultInt("PROC_OUT_STRING", 0x1000);
-    public static final int PROC_OUT_LONG =  ReflectUtil.useFieldValueOrDefaultInt("PROC_OUT_LONG", 0x2000);
-    public static final int PROC_OUT_FLOAT =  ReflectUtil.useFieldValueOrDefaultInt("PROC_OUT_FLOAT", 0x4000);
+    public static final int PROC_COMBINE =  ReflectUtil.useFieldValueOrDefaultInt(Process.class,"PROC_COMBINE", 0x100);
+    public static final int PROC_PARENS =  ReflectUtil.useFieldValueOrDefaultInt(Process.class,"PROC_PARENS", 0x200);
+    public static final int PROC_QUOTES =  ReflectUtil.useFieldValueOrDefaultInt(Process.class,"PROC_QUOTES", 0x400);
+    public static final int PROC_OUT_STRING =  ReflectUtil.useFieldValueOrDefaultInt(Process.class, "PROC_OUT_STRING", 0x1000);
+    public static final int PROC_OUT_LONG =  ReflectUtil.useFieldValueOrDefaultInt(Process.class,"PROC_OUT_LONG", 0x2000);
+    public static final int PROC_OUT_FLOAT =  ReflectUtil.useFieldValueOrDefaultInt(Process.class,"PROC_OUT_FLOAT", 0x4000);
 
     public static int[] SYSTEM_CPU_FORMAT = new int[] {
             PROC_SPACE_TERM | PROC_COMBINE,          // Combine multiple spaces

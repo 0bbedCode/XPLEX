@@ -4,6 +4,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.obbedcode.shared.Str;
+
 public class ProcStat {
     public static final int STAT_PID = 0;
     public static final int STAT_TCOMM = 1;
@@ -91,9 +93,9 @@ public class ProcStat {
     @NonNull
     private final String[] mStat;
 
-    private ProcStat(@NonNull String[] stat) {
-        mStat = stat;
-    }
+    private ProcStat(@NonNull String[] stat) { mStat = stat; }
+
+    public String[] getArray() { return mStat; }
 
     @NonNull
     public String getString(int index) {

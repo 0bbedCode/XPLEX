@@ -12,8 +12,8 @@ public class ReflectUtil {
     private static final String TAG = "ObbedCode.XP.ReflectUtil";
 
 
-    public static int useFieldValueOrDefaultInt(String fieldName, int defaultValue) {
-        DynamicField field = new DynamicField(Process.class, fieldName).setAccessible(true);
+    public static int useFieldValueOrDefaultInt(Class<?> clazz, String fieldName, int defaultValue) {
+        DynamicField field = new DynamicField(clazz, fieldName).setAccessible(true);
         if(!field.isValid()) return defaultValue;
         Object val = field.tryGetValueStatic();
         if(val == null) return defaultValue;

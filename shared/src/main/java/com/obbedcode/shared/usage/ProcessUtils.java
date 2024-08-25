@@ -4,6 +4,7 @@ import android.os.StrictMode;
 
 import androidx.annotation.Nullable;
 
+import com.obbedcode.shared.Str;
 import com.obbedcode.shared.logger.XLog;
 import com.obbedcode.shared.utils.StreamUtils;
 
@@ -36,6 +37,84 @@ public class ProcessUtils {
     private static final int PROC_OUT_LONG = 0x2000;
     private static final int PROC_OUT_FLOAT = 0x4000;
     private static final int PROC_CHAR = 0x800;
+
+
+    //WCHAN constant values
+    public static final int DO_SELECT = 0x01;             // Waiting for I/O operations via select().
+    public static final int HRTIMER_NANOSLEEP = 0x02;     // Sleeping in high-resolution timer.
+    public static final int POLL_SCHEDULE_TIMEOUT = 0x03; // Polling with a scheduled timeout.
+    public static final int SYS_EPOLL_WAIT = 0x04;        // Waiting for events using epoll.
+    public static final int DO_WAIT = 0x05;               // General process wait state.
+    public static final int PIPE_WAIT = 0x06;             // Waiting for I/O on a pipe.
+    public static final int FUTEX_WAIT_QUEUE_ME = 0x07;   // Waiting on a futex (fast user-space mutex).
+    public static final int SCHEDULE_TIMEOUT = 0x08;      // Waiting for a timeout in the scheduler.
+    public static final int DISK_WAIT = 0x09;             // Waiting for disk I/O to complete.
+    public static final int PIPE_READ = 0x0A;             // Reading data from a pipe.
+    public static final int TCP_ACCEPT = 0x0B;            // Waiting to accept a TCP connection.
+    public static final int UNIX_STREAM_CONNECT = 0x0C;   // Waiting for a UNIX stream socket connection.
+    public static final int SYNC_PAGE = 0x0D;             // Synchronizing a page from memory to disk.
+    public static final int GET_WRITE_ACCESS = 0x0E;      // Waiting to get write access to a file or resource.
+
+    /**
+     * Parses WCHAN String, wchan is essentially the process Status / State kinda ? ....
+     *
+     * @param wchanValue   The Raw Data from the /proc/pid/wchan File
+     * @return Number Representation of the Status
+     */
+    public static int parseWChan(String wchanValue) {
+        if (wchanValue == null || wchanValue.isEmpty()) {
+            return 0;
+        }
+
+        String wc = wchanValue.toLowerCase().trim();
+        switch (wc) {
+            case "do_select":
+                return DO_SELECT;
+            case "hrtimer_nanosleep":
+                return HRTIMER_NANOSLEEP;
+            case "poll_schedule_timeout":
+                return POLL_SCHEDULE_TIMEOUT;
+            case "sys_epoll_wait":
+                return SYS_EPOLL_WAIT;
+            case "do_wait":
+                return DO_WAIT;
+            case "pipe_wait":
+                return PIPE_WAIT;
+            case "futex_wait_queue_me":
+                return FUTEX_WAIT_QUEUE_ME;
+            case "schedule_timeout":
+                return SCHEDULE_TIMEOUT;
+            case "disk_wait":
+                return DISK_WAIT;
+            case "pipe_read":
+                return PIPE_READ;
+            case "tcp_accept":
+                return TCP_ACCEPT;
+            case "unix_stream_connect":
+                return UNIX_STREAM_CONNECT;
+            case "sync_page":
+                return SYNC_PAGE;
+            case "get_write_access":
+                return GET_WRITE_ACCESS;
+            default:
+                return 0;  // Unknown or unsupported wchan value
+        }
+    }
+
+    /**
+     * Parse the Command Line to get the Process/ Application name
+     *
+     * @param commandLine   Full Command Line String
+     * @return Return the exact Process / Application name else Null
+     */
+    public static String parseCommandLineName(String commandLine) {
+        if(!Str.isValid(commandLine)) return null;
+        String[] parts = commandLine.split("\\s+");
+        String nameStart = parts[0];
+        return nameStart.startsWith("/") ?
+                nameStart.substring(nameStart.lastIndexOf(File.separator) + 1).trim() :
+                nameStart.trim();
+    }
 
     /**
      * Reads and parses a proc file given the file path, format, and output arrays.
