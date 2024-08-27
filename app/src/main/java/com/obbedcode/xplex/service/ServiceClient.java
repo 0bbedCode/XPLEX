@@ -56,7 +56,6 @@ public class ServiceClient extends IXPService.Stub implements IBinder.DeathRecip
                 new Class[]{IXPService.class},
                 new ServiceProxy(IXPService.Stub.asInterface(binder)));
         XLog.i(TAG, "System Service Binder has been linked to the Proxy Service Class ");
-
         try {
             binder.linkToDeath(new ServiceClient(), 0);
         } catch (RemoteException e) {

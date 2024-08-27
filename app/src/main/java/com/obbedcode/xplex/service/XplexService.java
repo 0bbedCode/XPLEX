@@ -45,7 +45,7 @@ public class XplexService extends IXPService.Stub {
 
     @Override
     public String getLog() throws RemoteException {
-        TestSite.TestCPUStatOne();
+        //TestSite.TestCPUStatOne();
         return null;
     }
 

@@ -53,33 +53,18 @@ public class HomeStatsViewHolder extends BaseViewHolder<Object> {
 
     public HomeStatsViewHolder(View itemView) {
         super(itemView);
-        //double ramProgress = UsageUtils.getMemoryUsage(getContext());
-        //int ramProgressNum = (int)Math.round(ramProgress);
         final ProgressBar pbRam = itemView.findViewById(R.id.ram_progress_bar);
         final TextView tvRam = itemView.findViewById(R.id.ram_progress_text);
 
         final ProgressBar pbCpu = itemView.findViewById(R.id.cpu_progress_bar);
         final TextView tvCpu = itemView.findViewById(R.id.cpu_progress_text);
-
-        //pb.setProgress(ramProgressNum);
-        //tv.setText(String.valueOf(ramProgressNum));
-
         executorService.submit(() -> {
-
-            boolean did = false;
-
             while (errorTimes < 50) {
                 try {
                     while (errorTimes < 50) {
                         ThreadUtils.sleep(1500);
                         IXPService serv = ServiceClient.waitForService();
                         if(serv != null) {
-                            if(!did) {
-                                did = true;
-                                XLog.i(TAG, "Running a get Process List Test");
-                                serv.getRunningProcesses();
-                            }
-
                             int ramUsage = (int)Math.round(serv.getOverallMemoryUsage());
                             int cpuUsage = (int)Math.round(serv.getOverallCpuUsage());
 
@@ -94,19 +79,6 @@ public class HomeStatsViewHolder extends BaseViewHolder<Object> {
                                tvCpu.setText(cpuUsageStr);
                             });
                         }
-
-
-                        //Thread.sleep(1500);
-                        //ThreadUtils.sleep(1500);
-                        //int ramProgress = (int)Math.round(UsageUtils.getMemoryUsage(getContext()));
-                        //String ramProgressStr = String.valueOf(ramProgress);
-
-                        //int cpuProgress = (int)Math.round(UsageUtils.getOverallCpuUsage());
-
-                        //new Handler(Looper.getMainLooper()).post(() -> {
-                        //    pb.setProgress(ramProgress);
-                        //    tv.setText(ramProgressStr);
-                        //});
                     }
                 }catch (Exception e) {
                     errorTimes++;

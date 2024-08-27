@@ -124,6 +124,7 @@ public class RunningProcess implements Parcelable {
     }
 
     public static List<RunningProcess> getRunningProcesses(boolean getLinuxProcesses) {
+        //Do something with "getLinuxProcesses"
         List<ProcVirtualFileProcess> procProcesses = ProcVirtualFileProcess.getRunningProcesses();
         //XLog.i(TAG, "Total Proc Processes to Parse: " + procProcesses.size());
         List<RunningProcess> runningProcesses = new ArrayList<>();

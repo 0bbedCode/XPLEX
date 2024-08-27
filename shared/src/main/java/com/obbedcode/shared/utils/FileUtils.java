@@ -21,10 +21,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
+import java.nio.channels.Channel;
+import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 
 public class FileUtils {
@@ -137,7 +140,6 @@ public class FileUtils {
      */
     @NonNull
     public static String readVirtualFileContentsAsString(String pathFile, Charset charSet) {
-        //Files.readAllBytes()
         StringBuilder content = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(pathFile), charSet))) {
             int c;

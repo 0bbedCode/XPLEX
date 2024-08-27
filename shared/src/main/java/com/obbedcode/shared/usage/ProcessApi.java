@@ -6,6 +6,7 @@ import android.os.Binder;
 import android.os.Process;
 import android.util.Log;
 
+import com.obbedcode.shared.GhostCallerUid;
 import com.obbedcode.shared.logger.XLog;
 import com.obbedcode.shared.process.ProcHelper;
 import com.obbedcode.shared.reflect.DynamicMethod;
@@ -213,9 +214,7 @@ public class ProcessApi {
      * @return List of ActivityManager.RunningAppProcessInfo
      */
     public static List<ActivityManager.RunningAppProcessInfo> getRunningAppProcesses() {
-        long oldIden = Binder.clearCallingIdentity();
-        List<ActivityManager.RunningAppProcessInfo> procs = internalGetRunningAppProcesses.tryInstanceInvoke();
-        Binder.restoreCallingIdentity(oldIden);
-        return procs;
+        return GhostCallerUid.invokeCallable(() ->
+                internalGetRunningAppProcesses.tryInstanceInvoke());
     }
 }
