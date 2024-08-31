@@ -1,14 +1,15 @@
 package com.obbedcode.shared.usage;
 
 import android.app.ActivityManager;
+import android.app.ActivityThread;
 import android.app.IActivityManager;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Process;
 import android.util.Log;
 
 import com.obbedcode.shared.GhostCallerUid;
 import com.obbedcode.shared.logger.XLog;
-import com.obbedcode.shared.process.ProcHelper;
 import com.obbedcode.shared.reflect.DynamicMethod;
 import com.obbedcode.shared.reflect.ReflectUtil;
 import com.obbedcode.shared.reflect.HiddenApiUtils;
@@ -28,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 import rikka.hidden.compat.ActivityManagerApis;
+import rikka.hidden.compat.PackageManagerApis;
 
 public class ProcessApi {
     private static final String TAG = "ObbedCode.XP.ProcessApi";
@@ -86,6 +88,52 @@ public class ProcessApi {
     };
 
     static { HiddenApiUtils.bypassHiddenApiRestrictions(); }
+
+    public static boolean isSystemUID() { return isSystemUID(Process.myUid()); }
+    public static boolean isSystemUID(int uid) { return uid == Process.SYSTEM_UID; }
+
+    /**
+     * Gets the Current Process Package Name
+     *
+     * @return return Package Name of the Current Process
+     */
+    public static String getSelfPackageName() {
+        try {
+            return ActivityThread.currentActivityThread().getApplication().getPackageName();
+        }catch (Exception e) {
+            XLog.e(TAG, "Failed Getting Package Name, Error: " + e.getMessage(), true);
+            List<String> packages = PackageManagerApis.getPackagesForUidNoThrow(Process.myUid());
+            return packages.get(0);
+        }
+    }
+
+    /**
+     * Gets the Current Process Name
+     *
+     * @return return Process Name of Current
+     */
+    public static String getSelfProcessName() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            return Process.myProcessName();
+        } else {
+            BufferedReader fileReader = null;
+            try {
+                fileReader = new BufferedReader(new InputStreamReader(
+                        new FileInputStream("/proc/self/cmdline"), "iso-8859-1"));
+
+                int c;
+                StringBuilder processName = new StringBuilder();
+                while ((c = fileReader.read()) > 0)
+                    processName.append((char) c);
+
+                return processName.toString();
+            }catch (Exception e) {
+                XLog.e(TAG, "Failed to Read /proc/self/cmdline File for Process Name, Error: " + e.getMessage(), true);
+            } finally {
+                StreamUtils.dispose(fileReader);
+            }
+        } return getSelfPackageName();
+    }
 
     /**
      * Retrieves the number of physically present CPU cores in the system.
@@ -152,11 +200,9 @@ public class ProcessApi {
     public static double getOverallCpuUsage() {
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(new FileInputStream("/proc/stat")))) {
-
             String line = reader.readLine(); // Read the first line, which represents overall CPU stats
             if (line != null && line.startsWith("cpu")) {
                 String[] tokens = line.split("\\s+");
-
                 // Extract the values from the line (user, nice, system, idle, iowait, irq, softirq)
                 long user = Long.parseLong(tokens[1]);
                 long nice = Long.parseLong(tokens[2]);
@@ -165,7 +211,6 @@ public class ProcessApi {
                 long iowait = Long.parseLong(tokens[5]);
                 long irq = Long.parseLong(tokens[6]);
                 long softirq = Long.parseLong(tokens[7]);
-
                 // Calculate CPU usage using the helper function
                 return UsageUtils.calculateCpuUsage(user, nice, system, idle, iowait, irq, softirq);
             }

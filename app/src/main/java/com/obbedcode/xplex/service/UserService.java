@@ -7,14 +7,11 @@ import android.os.Bundle;
 import android.os.Process;
 
 import com.obbedcode.shared.Constants;
-import com.obbedcode.shared.data.XApp;
-import com.obbedcode.shared.process.SystemIPC;
+import com.obbedcode.shared.SystemIPC;
 import com.obbedcode.shared.logger.XLog;
-import com.obbedcode.shared.process.UidProcessObserver;
+import com.obbedcode.shared.usage.monitor.UidProcessObserver;
 import com.obbedcode.shared.utils.PkgUtils;
 import com.obbedcode.shared.utils.ServiceUtils;
-
-import java.util.List;
 
 
 public class UserService {

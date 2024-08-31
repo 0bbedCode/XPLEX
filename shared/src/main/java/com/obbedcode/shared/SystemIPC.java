@@ -1,4 +1,4 @@
-package com.obbedcode.shared.process;
+package com.obbedcode.shared;
 
 import android.annotation.SuppressLint;
 import android.content.AttributionSource;
@@ -6,9 +6,8 @@ import android.content.IContentProvider;
 import android.os.Bundle;
 import android.os.Process;
 
-import com.obbedcode.shared.BuildRuntime;
-import com.obbedcode.shared.Str;
 import com.obbedcode.shared.logger.XLog;
+import com.obbedcode.shared.process.ProcHelper;
 
 import java.util.List;
 

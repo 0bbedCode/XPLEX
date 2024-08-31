@@ -2,7 +2,6 @@ package com.obbedcode.shared.api;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Process;
@@ -10,10 +9,9 @@ import android.text.TextUtils;
 
 import com.obbedcode.shared.logger.XLog;
 import com.obbedcode.shared.process.ProcHelper;
-import com.obbedcode.shared.process.SystemIPC;
+import com.obbedcode.shared.SystemIPC;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class XposedApi {

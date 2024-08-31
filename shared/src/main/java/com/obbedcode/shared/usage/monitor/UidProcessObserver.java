@@ -1,11 +1,7 @@
-package com.obbedcode.shared.process;
+package com.obbedcode.shared.usage.monitor;
 
-import android.annotation.SuppressLint;
 import android.app.ActivityManager;
-import android.app.ActivityManagerHidden;
-import android.os.Binder;
 import android.os.Build;
-import android.os.Process;
 import android.os.RemoteException;
 
 import com.obbedcode.shared.logger.XLog;
@@ -13,12 +9,9 @@ import com.obbedcode.shared.reflect.DynamicMethod;
 import com.obbedcode.shared.reflect.ReflectUtil;
 import com.obbedcode.shared.utils.CollectionUtils;
 import com.obbedcode.shared.reflect.HiddenApiUtils;
-import com.obbedcode.shared.utils.RuntimeUtils;
 import com.obbedcode.shared.utils.ThreadUtils;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import rikka.hidden.compat.ActivityManagerApis;
 import rikka.hidden.compat.adapter.UidObserverAdapter;
