@@ -45,7 +45,7 @@ public class Str {
     }
 
     public static boolean isValid(CharSequence s) { return s != null && isValid(s.toString()); }
-    public static boolean isValid(String s) { return s != null && !TextUtils.isEmpty(s); }
+    public static boolean isValid(String s) { return !TextUtils.isEmpty(s); }
 
     public static boolean isValidNotWhitespaces(CharSequence s) { return s != null && isValidNotWhitespaces(s.toString()); }
     public static boolean isValidNotWhitespaces(String s) {
@@ -106,7 +106,7 @@ public class Str {
 
     public static String getFirstString(String str, String delimiter) { return getFirstString(str, delimiter, null); }
     public static String getFirstString(String str, String delimiter, String defaultValue) {
-        String trim = trim(str, delimiter, true);
+        String trim = trim(str, delimiter, true, true);//true for last param ?
         if (delimiter == null || delimiter.isEmpty()) return defaultValue != null ? defaultValue : trim;
         if (trim == null || trim.isEmpty()) return defaultValue;
         if (!trim.contains(delimiter)) return trim;
@@ -117,7 +117,7 @@ public class Str {
 
     public static String getLastString(String str, String delimiter) { return getLastString(str, delimiter, null); }
     public static String getLastString(String str, String delimiter, String defaultValue) {
-        str = trim(str, delimiter, true);
+        str = trim(str, delimiter, true, true);//true for last param
         if(delimiter == null || delimiter.isEmpty()) return defaultValue != null ? defaultValue : str;
         if(str == null || str.isEmpty()) return defaultValue;
         if(!str.contains(delimiter)) return str;
@@ -125,26 +125,43 @@ public class Str {
         return sp.length > 0 ? sp[sp.length - 1] : defaultValue;
     }
 
-    public static String trim(String s, String trimPrefix, boolean ensureTrimmed) {
-        if(s == null || s.isEmpty()) return s;
-        s = s.trim();
-        if(!s.contains(trimPrefix)) return s;
-
-        if(ensureTrimmed) {
-            while (s.startsWith(trimPrefix)) {
-                s = s.substring(1);
-                s = s.trim();
-            }
-            while (s.endsWith(trimPrefix)) {
-                s = s.substring(0, s.length() - 1);
-                s = s.trim();
-            }
-        }else {
-            if(s.startsWith(trimPrefix)) s = s.substring(1);
-            if(s.endsWith(trimPrefix)) s = s.substring(0, s.length() - 1);
+    public static String trim(String s, String trimPrefix, boolean ensureTrimmed, boolean trimWhitespace) {
+        if (s == null || s.isEmpty() || trimPrefix == null || trimPrefix.isEmpty()) {
+            return s;
         }
 
-        return s;
+        if(trimWhitespace) {
+            s = s.trim();
+            if (!s.contains(trimPrefix)) {
+                return s;
+            }
+        }
+
+
+        int start = 0;
+        int end = s.length();
+        int prefixLength = trimPrefix.length();
+
+        // Trim from the start
+        if (ensureTrimmed) {
+            while (start < end && s.startsWith(trimPrefix, start)) {
+                start += prefixLength;
+            }
+        } else if (s.startsWith(trimPrefix)) {
+            start = prefixLength;
+        }
+
+        // Trim from the end
+        if (ensureTrimmed) {
+            while (end > start && s.startsWith(trimPrefix, end - prefixLength)) {
+                end -= prefixLength;
+            }
+        } else if (end > prefixLength && s.startsWith(trimPrefix, end - prefixLength)) {
+            end -= prefixLength;
+        }
+
+        // Only create a new string if we actually trimmed something
+        return (start > 0 || end < s.length()) ? trimWhitespace ? s.substring(start, end).trim() : s.substring(start, end) : s;
     }
 
     public static List<String> splitToList(String str) { return splitToList(str, ","); }
@@ -154,8 +171,26 @@ public class Str {
         return Arrays.asList(splt);
     }
 
+    public static String joinArray(String[] arr) { return joinArray(arr, ","); }
+    public static String joinArray(String[] arr, String delimiter) {
+        if(arr == null) return "";
+        StringBuilder sb = new StringBuilder();
+        int sz = arr.length - 1;
+        for(int i = 0; i < arr.length; i++) {
+            String l = arr[i];
+            if(!isValidNotWhitespaces(l)) continue;
+            sb.append(l);
+            if(i != sz) {
+                sb.append(delimiter);
+            }
+        }
+
+        return sb.toString();
+    }
+
     public static String joinList(List<String> list) { return joinList(list, ","); }
     public static String joinList(List<String> list, String delimiter) {
+        if(list == null) return "";
         StringBuilder sb = new StringBuilder();
         int sz = list.size() - 1;
         for(int i = 0; i < list.size(); i++) {
