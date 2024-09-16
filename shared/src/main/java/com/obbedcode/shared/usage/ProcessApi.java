@@ -2,64 +2,58 @@ package com.obbedcode.shared.usage;
 
 import android.app.ActivityManager;
 import android.app.ActivityThread;
-import android.app.IActivityManager;
-import android.os.Binder;
 import android.os.Build;
 import android.os.Process;
-import android.util.Log;
 
 import com.obbedcode.shared.GhostCallerUid;
+import com.obbedcode.shared.io.FileApi;
 import com.obbedcode.shared.logger.XLog;
 import com.obbedcode.shared.reflect.DynamicMethod;
 import com.obbedcode.shared.reflect.ReflectUtil;
 import com.obbedcode.shared.reflect.HiddenApiUtils;
 import com.obbedcode.shared.reflect.ServicesGlobal;
-import com.obbedcode.shared.utils.CollectionUtils;
-import com.obbedcode.shared.utils.RuntimeUtils;
 import com.obbedcode.shared.utils.StreamUtils;
-import com.obbedcode.shared.utils.ThreadUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.util.Collections;
 import java.util.List;
 
-import rikka.hidden.compat.ActivityManagerApis;
 import rikka.hidden.compat.PackageManagerApis;
 
 public class ProcessApi {
     private static final String TAG = "ObbedCode.XP.ProcessApi";
 
     /*Directory to Store CPU information including Cores*/
-    private static final String DIRECTORY_CPU = "/sys/devices/system/cpu";
+    public static final String DIRECTORY_CPU = FileApi.buildPath("sys", "devices", "system", "cpu");
 
     //https://android.googlesource.com/kernel/msm/+/android-msm-bullhead-3.10-marshmallow-dr/Documentation/ABI/testing/sysfs-devices-system-cpu
 
     /*What cores exist on the Hardware offline or online does not matter*/
-    private static final String FILE_CPU_CORE_PRESENT = "/sys/devices/system/cpu/present";
+    public static final String FILE_CPU_CORE_PRESENT = FileApi.buildPath("sys", "devices", "system", "cpu", "present");
 
     /*Possible Limit for the Hardware to Handle*/
-    private static final String FILE_CPU_CORE_POSSIBLE = "/sys/devices/system/cpu/possible";
+    public static final String FILE_CPU_CORE_POSSIBLE = FileApi.buildPath("sys", "devices", "system", "cpu", "possible");
 
     /*Cores offline*/
-    private static final String FILE_CPU_CORE_OFFLINE = "/sys/devices/system/cpu/offline";
+    public static final String FILE_CPU_CORE_OFFLINE = FileApi.buildPath("sys", "devices", "system", "cpu", "offline");
 
     /*Cores Online*/
-    private static final String FILE_CPU_CORE_ONLINE = "/sys/devices/system/cpu/online";
+    public static final String FILE_CPU_CORE_ONLINE = FileApi.buildPath("sys", "devices", "system", "cpu", "online");
 
     /*Max amount of Cores the Kernel Can Handle this one format is not in 0-X like the rest but more so X*/
-    private static final String FILE_CPU_KERNEL_MAX = "/sys/devices/system/cpu/kernel_max";
+    public static final String FILE_CPU_KERNEL_MAX = FileApi.buildPath("sys", "devices", "system", "cpu", "kernel_max");
+
+    public static final String FILE_SELF_CMDLINE = FileApi.buildPath("proc", "self", "cmdline");
+
+    public static final String FILE_CPU_STAT = FileApi.buildPath("proc", "stat");
 
     private static final DynamicMethod internalReadProcFile = new DynamicMethod(Process.class, "readProcFile", String.class, int[].class, String[].class, long[].class, float[].class).setAccessible(true);
     private static final DynamicMethod internalGetPIDs = new DynamicMethod(Process.class, "getPids", String.class, int[].class).setAccessible(true);
 
-    private static DynamicMethod internalGetRunningAppProcesses
-            = new DynamicMethod(ServicesGlobal.getIActivityManager().getClass(), "getRunningAppProcesses")
-            .bindInstance(ServicesGlobal.getIActivityManager());
+    private static final DynamicMethod internalGetRunningAppProcesses
+            = new DynamicMethod(ServicesGlobal.getIActivityManager().getClass(), "getRunningAppProcesses").bindInstance(ServicesGlobal.getIActivityManager());
 
     //https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/core/java/android/os/Process.java
     //https://android.googlesource.com/platform/frameworks/base/+/android-6.0.0_r1/core/java/android/os/Process.java
@@ -76,7 +70,7 @@ public class ProcessApi {
     public static final int PROC_OUT_LONG =  ReflectUtil.useFieldValueOrDefaultInt(Process.class,"PROC_OUT_LONG", 0x2000);
     public static final int PROC_OUT_FLOAT =  ReflectUtil.useFieldValueOrDefaultInt(Process.class,"PROC_OUT_FLOAT", 0x4000);
 
-    public static int[] SYSTEM_CPU_FORMAT = new int[] {
+    public static final int[] SYSTEM_CPU_FORMAT = new int[] {
             PROC_SPACE_TERM | PROC_COMBINE,          // Combine multiple spaces
             PROC_SPACE_TERM | PROC_OUT_LONG,         // 1: user time
             PROC_SPACE_TERM | PROC_OUT_LONG,         // 2: nice time
@@ -119,7 +113,7 @@ public class ProcessApi {
             BufferedReader fileReader = null;
             try {
                 fileReader = new BufferedReader(new InputStreamReader(
-                        new FileInputStream("/proc/self/cmdline"), "iso-8859-1"));
+                        new FileInputStream(FILE_SELF_CMDLINE), "iso-8859-1"));
 
                 int c;
                 StringBuilder processName = new StringBuilder();
@@ -183,7 +177,7 @@ public class ProcessApi {
      */
     public static int getCoreCount() {
         try {
-            File dir = new File("/sys/devices/system/cpu/");
+            File dir = new File(DIRECTORY_CPU);
             File[] files = dir.listFiles((file, name) -> name.matches("cpu[0-9]+"));
             if(files != null) return files.length;
         } catch (Exception ignored) { }
@@ -199,7 +193,7 @@ public class ProcessApi {
      */
     public static double getOverallCpuUsage() {
         try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(new FileInputStream("/proc/stat")))) {
+                new InputStreamReader(new FileInputStream(FILE_CPU_STAT)))) {
             String line = reader.readLine(); // Read the first line, which represents overall CPU stats
             if (line != null && line.startsWith("cpu")) {
                 String[] tokens = line.split("\\s+");
@@ -231,10 +225,8 @@ public class ProcessApi {
      * @return true if the file was read and parsed successfully, false otherwise.
      */
     public static boolean readProcFile(String filePath, int[] format, String[] outStrings, long[] outLongs, float[] outFloats) {
-        if(internalReadProcFile.isValid()) {
-            if(Boolean.TRUE.equals(internalReadProcFile.tryStaticInvoke(filePath, format, outStrings, outLongs, outFloats)));
-               return true;
-        } return ProcessUtils.readProcFile(filePath, format, outStrings, outLongs, outFloats);
+        return internalReadProcFile.isValid() && Boolean.TRUE.equals(internalReadProcFile.tryStaticInvoke(filePath, format, outStrings, outLongs, outFloats))
+                || ProcessUtils.readProcFile(filePath, format, outStrings, outLongs, outFloats);
     }
 
     /**

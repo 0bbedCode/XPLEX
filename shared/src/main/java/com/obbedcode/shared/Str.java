@@ -17,6 +17,8 @@ public class Str {
 
     public static final Character SPACE_CHAR = ' ';
 
+    public static boolean safeEqualsIgnoreCase(String a, String b) { return a == null ? b == null : a.equalsIgnoreCase(b); }
+
     public static String getFirstElementIsNumber(String[] elements) { return getFirstElementIsNumber(elements, null); }
     public static String getFirstElementIsNumber(String[] elements, String defaultValue) {
         if(elements == null || elements.length < 1) return defaultValue;

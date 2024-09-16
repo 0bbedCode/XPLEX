@@ -63,9 +63,8 @@ public class FileEx extends File {
         return new FileEx(FileApi.getParent(getAbsolutePath()));
     }
 
-    public void takeOwnership(UserId userId, UserId groupId) { FileApi.chown(getAbsolutePath(), userId, groupId, isDirectory()); }
-
     public void takeOwnership() { FileApi.chown(getAbsolutePath(), Process.myUid(), Process.myUid(), isDirectory()); }
+    public void takeOwnership(UserId userId, UserId groupId) { FileApi.chown(getAbsolutePath(), userId, groupId, isDirectory()); }
 
     public void setPermissions(ModePermission ownerPermissions, ModePermission groupPermissions, ModePermission otherPermissions) {
         FileApi.chmod(getAbsolutePath(), ChmodModeBuilder.create()
@@ -86,14 +85,14 @@ public class FileEx extends File {
         //something/something/something
         //or
         //something
-        String withStart = separator + cleaned;
+        String withStart = del + cleaned;
         if(readAsSymbolic) {
             return FileUtils.readSymbolicLink(withStart, true);
         } else {
             if(parseIfFileDescriptor) {
                 if(cleaned.length() > 4) {
                     String low = cleaned.toLowerCase();
-                    if(low.startsWith("proc") && low.contains(separator + "fd" + separator)) {
+                    if(low.startsWith("proc") && low.contains(del + "fd" + del)) {
                         List<String> pts = FileApi.getParts(low);
                         if(pts.size() == 4) {
                             // =>  /proc/somePid/fd/fileNumber
@@ -105,11 +104,11 @@ public class FileEx extends File {
                     }
                 }
 
-                if(!cleaned.contains(separator)) {
-                    char[] chrs = cleaned.toCharArray();
+                if(!cleaned.contains(del)) {
+                    char[] chars = cleaned.toCharArray();
                     boolean isAllNum = true;
-                    for(int i = 0; i < chrs.length; i++) {
-                        if(!Character.isDigit(chrs[i])) {
+                    for(int i = 0; i < chars.length; i++) {
+                        if(!Character.isDigit(chars[i])) {
                             isAllNum = false;
                             break;
                         }

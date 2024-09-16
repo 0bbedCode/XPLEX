@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.dev.rikka.material.builder)
 }
 
 android {
@@ -93,6 +94,8 @@ dependencies {
     implementation 'dev.rikka.ndk.thirdparty:cxx:1.2.0'
 
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
+
+    //implementation 'rikka.material:material-theme-builder:2.7.0'
 
 
     implementation libs.libsu.core

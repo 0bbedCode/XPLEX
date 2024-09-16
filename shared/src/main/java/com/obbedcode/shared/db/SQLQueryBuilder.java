@@ -5,7 +5,9 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 
 import com.obbedcode.shared.Str;
+import com.obbedcode.shared.helpers.StrBuilder;
 import com.obbedcode.shared.utils.CollectionUtils;
+import com.obbedcode.shared.xplex.data.XIdentity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,8 +44,6 @@ public class SQLQueryBuilder {
     protected List<String> whereArgs = new ArrayList<>();
     protected List<String> onlyReturn = new ArrayList<>();
 
-    protected SQLDatabase database = null;
-
     private int mColumnCount = 0;
     private String mOpSymbol  = OP_OR;
     private String mOpBitwise = BITWISE_EQUALS;
@@ -57,10 +57,16 @@ public class SQLQueryBuilder {
     private String mColumnOrder = null;
     public String getColumnOrder() { return mColumnOrder; }
 
+    private boolean mPushColumnIfNull = true;
+    public boolean getPushColumnValueIfNull() { return mPushColumnIfNull; }
+
     public String[] getOnlyReturn() { return CollectionUtils.toStringArray(onlyReturn); }
     public String getWhereClause() { return whereClause.toString(); }
     public String[] getWhereArgs() { return CollectionUtils.toStringArray(whereArgs); }
-    public SQLDatabase getDatabase() { return database; }
+
+    public SQLQueryBuilder() { }
+    public SQLQueryBuilder(String tableName) { this.mTableName = tableName; }
+    public SQLQueryBuilder(String tableName, boolean pushColumnIfNullValue) { this.mTableName = tableName; this.mPushColumnIfNull = pushColumnIfNullValue; }
 
     public SQLQueryBuilder whereColumns(String ... columns) {
         for(String c : columns) whereColumn(c, null);
@@ -72,23 +78,33 @@ public class SQLQueryBuilder {
         return this;
     }
 
+    public SQLQueryBuilder whereIdentity(Integer userId, String category) {
+        if(mPushColumnIfNull && userId == null) userId = XIdentity.GLOBAL_USER;
+        if(mPushColumnIfNull && category == null) category = XIdentity.GLOBAL_NAMESPACE;
+        whereColumn(XIdentity.FIELD_USER, userId, BITWISE_EQUALS, OP_AND);
+        whereColumn(XIdentity.FIELD_CATEGORY, category, BITWISE_EQUALS, OP_AND);
+        return this;
+    }
+
     public SQLQueryBuilder whereColumn(String columnName, int value) { return whereColumn(columnName, value, null); }
-    public SQLQueryBuilder whereColumn(String columnName, int value, String symbol) { return whereColumn(columnName, value, symbol, null); }
-    public SQLQueryBuilder whereColumn(String columnName, int value, String symbol, String op) { return whereColumn(columnName, value, symbol, op, true); }
-    public SQLQueryBuilder whereColumn(String columnName, int value, String symbol, String op, boolean bindParams) { return whereColumn(columnName, String.valueOf(value), symbol, op, bindParams); }
+    public SQLQueryBuilder whereColumn(String columnName, int value, String compareSymbol) { return whereColumn(columnName, value, compareSymbol, null); }
+    public SQLQueryBuilder whereColumn(String columnName, int value, String compareSymbol, String logicalOp) { return whereColumn(columnName, value, compareSymbol, logicalOp, true); }
+    public SQLQueryBuilder whereColumn(String columnName, int value, String compareSymbol, String logicalOp, boolean bindParams) { return whereColumn(columnName, String.valueOf(value), compareSymbol, logicalOp, bindParams); }
+
+    //Make non null versions or something ?
 
     @SuppressWarnings("UnusedReturnValue")
     public SQLQueryBuilder whereColumn(String columnName, String value) { return whereColumn(columnName, value, null); }
-    public SQLQueryBuilder whereColumn(String columnName, String value, String symbol) { return whereColumn(columnName, value, symbol, null); }
-    public SQLQueryBuilder whereColumn(String columnName, String value, String symbol, String op) {  return whereColumn(columnName, value, symbol, op, true); }
-    public SQLQueryBuilder whereColumn(String columnName, String value, String symbol, String op, boolean bindParams) {
-        if(!TextUtils.isEmpty(columnName)) {
-            String opUpper = op != null ? op.toUpperCase() : null;
+    public SQLQueryBuilder whereColumn(String columnName, String value, String compareSymbol) { return whereColumn(columnName, value, compareSymbol, null); }
+    public SQLQueryBuilder whereColumn(String columnName, String value, String compareSymbol, String logicalOp) {  return whereColumn(columnName, value, compareSymbol, logicalOp, true); }
+    public SQLQueryBuilder whereColumn(String columnName, String value, String compareSymbol, String logicalOp, boolean bindParams) {
+        if(!TextUtils.isEmpty(columnName) && (mPushColumnIfNull || value != null)) {
+            String opUpper = logicalOp != null ? logicalOp.toUpperCase() : null;
             String opSym = opUpper == null || !OP_SYMBOLS.contains(opUpper) ? mOpSymbol : opUpper;
             if(mColumnCount != 0) whereClause.append(" ").append(opSym);        //Append [or] [and] if needed if more than one element
 
             whereClause.append(" ").append(columnName);                         //Append Column name like "CoolColumnName = ?"
-            String sym = symbol != null && COMPARE_SYMBOLS.contains(symbol) ? symbol : mOpSymbol;
+            String sym = compareSymbol != null && COMPARE_SYMBOLS.contains(compareSymbol) ? compareSymbol : mOpSymbol;
             whereClause.append(" ").append(sym);                                //Append actual Bit wise op like [>] [<] [=]
             //We can bind to question mark (?) from Arg Value List (index based so first column has first value in value list)
             //We can also directly inline the value example "CoolColumn = 3"
@@ -96,14 +112,16 @@ public class SQLQueryBuilder {
                 whereClause.append(" ").append(VALUE_BIND);
                 //if(value == null) whereArgs.add("null");
                 //else whereArgs.add(value);
-                whereArgs.add(value);
+                //whereArgs.add(value);
+                if(value != null)
+                    whereArgs.add(value);
             } else whereClause.append(" ").append(value);
             mColumnCount++;
         } return this;
     }
 
-    public SQLQueryBuilder database(SQLDatabase database) {
-        this.database = database;
+    public SQLQueryBuilder pushColumnValueIfNull(boolean pushIfNull) {
+        this.mPushColumnIfNull = pushIfNull;
         return this;
     }
 
@@ -145,16 +163,17 @@ public class SQLQueryBuilder {
         return this;
     }
 
+    public SQLQuerySnake asSnake() { return (SQLQuerySnake) this; }
+
     @NonNull
     @Override
-    @SuppressWarnings("StringBufferReplaceableByString")
     public String toString() {
-        return new StringBuilder()
-                .append("Table Name=").append(mTableName).append("\n")
-                .append("Where Clause=").append(whereClause).append("\n")
-                .append("Where Args=").append(Str.joinList(whereArgs, ",")).append("\n")
-                .append("Only Return=").append(Str.joinList(onlyReturn, ",")).append("\n")
-                .append("Order By=").append(mColumnOrder).append("\n")
+        return StrBuilder.create()
+                .appendFieldLine("Table Name", this.mTableName)
+                .appendFieldLine("Where Clause", this.whereClause.toString())
+                .appendFieldLine("Where Args", Str.joinList(this.whereArgs, ","))
+                .appendFieldLine("Only Return", Str.joinList(this.onlyReturn, ","))
+                .appendFieldLine("Order By", mColumnOrder)
                 .toString();
     }
 }

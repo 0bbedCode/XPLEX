@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 import com.obbedcode.shared.Str;
+import com.obbedcode.shared.helpers.StrBuilder;
 import com.obbedcode.shared.logger.XLog;
 import com.obbedcode.shared.utils.CollectionUtils;
 
@@ -109,17 +110,17 @@ public class RunningProcess implements Parcelable {
     @NonNull
     @Override
     public String toString() {
-        return new StringBuilder()
-                .append("CMD Line Name:").append(this.cmdLineName).append(Str.NEW_LINE)
-                .append("COMM Name:").append(this.commName).append(Str.NEW_LINE)
-                .append("Status Name:").append(this.statusName).append(Str.NEW_LINE)
-                .append("PID:").append(this.pid).append(Str.NEW_LINE)
-                .append("UID:").append(this.uid).append(Str.NEW_LINE)
-                .append("CMD Line:").append(this.cmdline).append(Str.NEW_LINE)
-                .append("Executable Directory:").append(this.executablePath).append(Str.NEW_LINE)
-                .append("Current Working Directory:").append(this.currentWorkingDirectory).append(Str.NEW_LINE)
-                .append("Root Directory:").append(this.rootDirectory).append(Str.NEW_LINE)
-                .append("Is Linux:").append(this.isLinuxProcess).append(Str.NEW_LINE)
+        return StrBuilder.create()
+                .appendFieldLine("Command Line Name", this.cmdLineName)
+                .appendFieldLine("Comm Name", this.commName)
+                .appendFieldLine("Status Name", this.statusName)
+                .appendFieldLine("PID", this.pid)
+                .appendFieldLine("UID", this.uid)
+                .appendFieldLine("Command Line", this.cmdline)
+                .appendFieldLine("Executable Working Directory", this.executablePath)
+                .appendFieldLine("Current Working Directory", this.currentWorkingDirectory)
+                .appendFieldLine("Root Directory", this.rootDirectory)
+                .appendFieldLine("Is Linux", this.isLinuxProcess)
                 .toString();
     }
 

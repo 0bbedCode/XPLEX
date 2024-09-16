@@ -2,6 +2,7 @@ package com.obbedcode.shared.usage;
 
 import android.app.ActivityManager;
 
+import com.obbedcode.shared.io.FileApi;
 import com.obbedcode.shared.logger.XLog;
 import com.obbedcode.shared.reflect.DynamicMethod;
 import com.obbedcode.shared.reflect.ServicesGlobal;
@@ -16,6 +17,8 @@ public class MemoryApi {
     private static final DynamicMethod internalGetMemoryInfo
             = new DynamicMethod(ServicesGlobal.getIActivityManager().getClass(), "getMemoryInfo", ActivityManager.MemoryInfo.class)
             .bindInstance(ServicesGlobal.getIActivityManager());
+
+    public static final String MEM_INFO_FILE = FileApi.buildPath("proc", "meminfo");
 
     /**
      * Retrieves the memory information of the system by reading from the /proc/meminfo file.
@@ -62,7 +65,7 @@ public class MemoryApi {
         boolean gotTotal = false;
         boolean gotFree = false;
         boolean gotCached = false;
-        try (BufferedReader reader = new BufferedReader(new FileReader("/proc/meminfo"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(MEM_INFO_FILE))) {
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split("\\s+");
                 String name = parts[0];

@@ -9,6 +9,7 @@ import android.os.Environment;
 import androidx.annotation.NonNull;
 
 import com.obbedcode.shared.Str;
+import com.obbedcode.shared.helpers.StrBuilder;
 import com.obbedcode.shared.io.FileEx;
 import com.obbedcode.shared.io.ModePermission;
 import com.obbedcode.shared.logger.XLog;
@@ -16,6 +17,8 @@ import com.obbedcode.shared.utils.CursorUtils;
 import com.obbedcode.shared.utils.XposedUtils;
 
 import java.io.File;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -32,11 +35,31 @@ public class SQLDatabase {
 
     public SQLiteDatabase getRawDatabase() { return db; }
 
-    public SQLDatabase(String databasePath) {
-        file = new FileEx(databasePath, false, false);
+    public SQLDatabase(String databasePath) { this(databasePath, false); }
+    public SQLDatabase(String databaseNameOrPath, boolean useCustomPath) {
+        file = new FileEx(useCustomPath ?
+                getDatabaseDirectoryCustom(null) + File.separator + databaseNameOrPath :
+                databaseNameOrPath
+                , false, false);
         parentDirectory = file.getParentEx(true);
         ensureDirectoryExists();
     }
+
+    @SuppressWarnings("unused")
+    public boolean isReady(String tableName, LinkedHashMap<String, String> columns) {
+        if(!isReady()) return false;
+        if(tableName == null) return true;//Assume they did not want to specify table name ???
+        if(hasTable(tableName)) return true;
+        if(columns == null) {
+            XLog.e(TAG, "Table Does not exist and Columns is null... " + tableName + " " + this);
+            return false;
+        }
+
+        return  createTable(columns, tableName);
+    }
+
+    @SuppressWarnings("unused")
+    public boolean isReady() { return isReady(this); }
 
     @SuppressWarnings("unused")
     public FileEx getFile() { return file; }
@@ -61,6 +84,9 @@ public class SQLDatabase {
             XLog.e(TAG, "Failed to Ensure Database Exists! " + e.getMessage());
         }
     }
+
+    @SuppressWarnings("unused")
+    public boolean isOpen() { return isOpen(false); }
 
     @SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted"})
     public boolean isOpen(boolean openIfNot) {
@@ -289,10 +315,10 @@ public class SQLDatabase {
     @NonNull
     @Override
     public String toString() {
-        return new StringBuilder()
-                .append("Name: ").append(file.getName()).append("\n")
-                .append("Path: ").append(parentDirectory.getAbsoluteFile()).append("\n")
-                .append("Open: ").append(open())
+        return StrBuilder.create()
+                .appendFieldLine("Name", this.file.getName())
+                .appendFieldLine("Path", this.parentDirectory.getAbsolutePath())
+                .appendFieldLine("Open", this.isOpen())
                 .toString();
     }
 
@@ -337,6 +363,8 @@ public class SQLDatabase {
     @SuppressWarnings("unused")
     public static String getDatabaseDirectoryCustom(Context context) {
         try {
+            //Stop using Context it can get messy
+            //See workarounds
             if(context != null && XposedUtils.isVirtualXposed())
                 return context.getFilesDir().getPath();
             else {
