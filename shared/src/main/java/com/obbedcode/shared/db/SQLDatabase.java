@@ -39,9 +39,9 @@ public class SQLDatabase {
     public SQLDatabase(String databaseNameOrPath, boolean useCustomPath) {
         file = new FileEx(useCustomPath ?
                 getDatabaseDirectoryCustom(null) + File.separator + databaseNameOrPath :
-                databaseNameOrPath
-                , false, false);
-        parentDirectory = file.getParentEx(true);
+                databaseNameOrPath, false, false);
+        parentDirectory = file.getDirectory();
+        XLog.i(TAG, "DB = " + this, true);
         ensureDirectoryExists();
     }
 
@@ -74,10 +74,15 @@ public class SQLDatabase {
     @SuppressWarnings("unused")
     public void ensureDirectoryExists() {
         try {
+            XLog.i(TAG, "Setting Directory Permissions");
             if(!XposedUtils.isVirtualXposed()) {
+                XLog.i(TAG, "IS not VXP");
                 if(parentDirectory.mkdirs()) {
+                    XLog.i(TAG, "MADE DIR OR EXISTS");
                     parentDirectory.takeOwnership();
+                    XLog.i(TAG, "TAKE OWNERSHIP");
                     parentDirectory.setPermissions(ModePermission.READ_WRITE_EXECUTE, ModePermission.READ_WRITE_EXECUTE, ModePermission.NONE);
+                    XLog.i(TAG, "SET PERMS");
                 }
             }
         } catch (Exception e) {
@@ -106,8 +111,8 @@ public class SQLDatabase {
     @SuppressWarnings("unused")
     public boolean open() {
         try {
-            if(!file.exists()) {
-                XLog.e(TAG, "Database File Object is null or does not Exist... " + file.getPath() + " File: " + file.getName());
+            if(!parentDirectory.exists()) {
+                XLog.e(TAG, "Parent Directory does not Exist... " + file.getPath() + " File: " + file.getName());
                 return false;
             }
 
@@ -372,7 +377,7 @@ public class SQLDatabase {
                 File[] fls = new File(base).listFiles();
                 if(fls != null) {
                     for (File f : fls) {
-                        if(f.isFile() && f.getName().startsWith("XPX-")) {
+                        if(f.isDirectory() && f.getName().startsWith("XPX-")) {
                             return f.getAbsolutePath();
                         }
                     }
@@ -385,7 +390,7 @@ public class SQLDatabase {
                 return full;
             }
         }catch (Exception e) {
-            XLog.e(TAG, "Failed to Get the Custom Database Directory :( " + e.getMessage());
+            XLog.e(TAG, "Failed to Get the Custom Database Directory :( " + e.getMessage(), true);
             return null;
         }
     }

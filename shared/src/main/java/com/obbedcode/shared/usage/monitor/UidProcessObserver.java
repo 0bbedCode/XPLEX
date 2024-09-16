@@ -138,7 +138,7 @@ public class UidProcessObserver {
                             }
                         };
 
-                        XLog.i(TAG, "Registering the UID Observer for Activity Manager UID: " + mUid, true);
+                        XLog.i(TAG, "Registering the UID Observer for Activity Manager UID: " + mUid + " ACTIVE VAL: " + UID_OBSERVER_ACTIVE + " UNKOWN VAL: " + PROCESS_STATE_UNKNOWN, true);
                         ActivityManagerApis.registerUidObserver(
                                 mUidObserverAdapter,
                                 UID_OBSERVER_ACTIVE,

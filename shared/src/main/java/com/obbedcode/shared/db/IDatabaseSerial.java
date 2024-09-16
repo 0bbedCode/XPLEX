@@ -11,6 +11,8 @@ public interface IDatabaseSerial extends ICopyable {
     ContentValues toContentValues();
     List<ContentValues> toContentValuesList();
 
+    void writeQuery(SQLSnake snake, SnakeAction wantedAction);
+
     void fromCursor(Cursor cursor);
     void fromContentValues(ContentValues contentValues);
     void fromContentValuesList(List<ContentValues> contentValues);

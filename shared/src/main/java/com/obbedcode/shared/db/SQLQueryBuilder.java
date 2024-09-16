@@ -44,6 +44,8 @@ public class SQLQueryBuilder {
     protected List<String> whereArgs = new ArrayList<>();
     protected List<String> onlyReturn = new ArrayList<>();
 
+    private boolean mHasEntriesPassedId = false;
+    private boolean mHasConsumedId = false;
     private int mColumnCount = 0;
     private String mOpSymbol  = OP_OR;
     private String mOpBitwise = BITWISE_EQUALS;
@@ -51,8 +53,8 @@ public class SQLQueryBuilder {
     public String getOpSymbol() { return mOpSymbol; }
     public String getBitwise() { return mOpBitwise; }
 
-    private String mTableName = null;
-    public String getTableName() { return mTableName; }
+    protected String tableName = null;
+    public String getTableName() { return tableName; }
 
     private String mColumnOrder = null;
     public String getColumnOrder() { return mColumnOrder; }
@@ -63,10 +65,21 @@ public class SQLQueryBuilder {
     public String[] getOnlyReturn() { return CollectionUtils.toStringArray(onlyReturn); }
     public String getWhereClause() { return whereClause.toString(); }
     public String[] getWhereArgs() { return CollectionUtils.toStringArray(whereArgs); }
+    public boolean hasConsumedId() { return mHasConsumedId; }
+    public boolean hasConsumedMoreThanId() { return mHasEntriesPassedId; }
+
+    public boolean hasWhereClause() { return whereClause.length() > 0; }
+    public boolean hasWhereArgs() { return !whereArgs.isEmpty(); }
 
     public SQLQueryBuilder() { }
-    public SQLQueryBuilder(String tableName) { this.mTableName = tableName; }
-    public SQLQueryBuilder(String tableName, boolean pushColumnIfNullValue) { this.mTableName = tableName; this.mPushColumnIfNull = pushColumnIfNullValue; }
+    public SQLQueryBuilder(String tableName) { this.tableName = tableName; }
+    public SQLQueryBuilder(String tableName, boolean pushColumnIfNullValue) { this.tableName = tableName; this.mPushColumnIfNull = pushColumnIfNullValue; }
+
+    @SuppressWarnings("unused")
+    public SQLQueryBuilder consumedId(boolean hasConsumedId) {
+        this.mHasConsumedId = hasConsumedId;
+        return this;
+    }
 
     public SQLQueryBuilder whereColumns(String ... columns) {
         for(String c : columns) whereColumn(c, null);
@@ -79,8 +92,18 @@ public class SQLQueryBuilder {
     }
 
     public SQLQueryBuilder whereIdentity(Integer userId, String category) {
-        if(mPushColumnIfNull && userId == null) userId = XIdentity.GLOBAL_USER;
-        if(mPushColumnIfNull && category == null) category = XIdentity.GLOBAL_NAMESPACE;
+        if(mHasConsumedId) return this;
+        if(userId == null) {
+            if(!mPushColumnIfNull) return this;
+            userId = XIdentity.GLOBAL_USER;
+        }
+
+        if(category == null) {
+            if(!mPushColumnIfNull) return this;
+            category = XIdentity.GLOBAL_NAMESPACE;
+        }
+
+        mHasConsumedId = true;
         whereColumn(XIdentity.FIELD_USER, userId, BITWISE_EQUALS, OP_AND);
         whereColumn(XIdentity.FIELD_CATEGORY, category, BITWISE_EQUALS, OP_AND);
         return this;
@@ -99,6 +122,11 @@ public class SQLQueryBuilder {
     public SQLQueryBuilder whereColumn(String columnName, String value, String compareSymbol, String logicalOp) {  return whereColumn(columnName, value, compareSymbol, logicalOp, true); }
     public SQLQueryBuilder whereColumn(String columnName, String value, String compareSymbol, String logicalOp, boolean bindParams) {
         if(!TextUtils.isEmpty(columnName) && (mPushColumnIfNull || value != null)) {
+            if(!mHasEntriesPassedId) {
+                if(!"user".equalsIgnoreCase(columnName) && !"category".equalsIgnoreCase(columnName))
+                    mHasEntriesPassedId = true;
+            }
+
             String opUpper = logicalOp != null ? logicalOp.toUpperCase() : null;
             String opSym = opUpper == null || !OP_SYMBOLS.contains(opUpper) ? mOpSymbol : opUpper;
             if(mColumnCount != 0) whereClause.append(" ").append(opSym);        //Append [or] [and] if needed if more than one element
@@ -159,17 +187,17 @@ public class SQLQueryBuilder {
     }
 
     public SQLQueryBuilder table(String tableName) {
-        this.mTableName = tableName;
+        this.tableName = tableName;
         return this;
     }
 
-    public SQLQuerySnake asSnake() { return (SQLQuerySnake) this; }
+    public SQLSnake asSnake() { return (SQLSnake) this; }
 
     @NonNull
     @Override
     public String toString() {
         return StrBuilder.create()
-                .appendFieldLine("Table Name", this.mTableName)
+                .appendFieldLine("Table Name", this.tableName)
                 .appendFieldLine("Where Clause", this.whereClause.toString())
                 .appendFieldLine("Where Args", Str.joinList(this.whereArgs, ","))
                 .appendFieldLine("Only Return", Str.joinList(this.onlyReturn, ","))

@@ -15,7 +15,7 @@
     <string name="card_test_title">Core Tests</string>
     <string name="card_test_summary">Core tests to ensure Application is running at its best!</string>
 
-    <string name="card_welcome_title">Welcome to XPL-EX! v9</string>
+    <string name="card_welcome_title">Welcome to XPL-EX! v6</string>
     <string name="card_welcome_summary">Welcome:</string>
 
     <string name="text_test_root">Root Access</string>
@@ -23,7 +23,6 @@
     <string name="text_test_service">XPlex Bridge Service</string>
     <string name="text_test_folder_xlua">XLua Folder </string>
     <string name="text_test_folder_xplex">XPlex Folder </string>
-
 
     <string name="message_test_failed_xlua_folder">XLua Folder seems to Exists Consider Deleting it to avoid Detections assuming your XPL-EX Folder is created with its databases.</string>
 

@@ -11,6 +11,7 @@ public class XposedUtils {
     public static boolean isExpModuleActive() {
         if (isExp != null) return isExp;
         try {
+            //ye we can use ActivityThread...
             @SuppressLint("PrivateApi") Context context = (Context) Class.forName("android.app.ActivityThread")
                     .getDeclaredMethod("currentApplication", new Class[0]).invoke(null, new Object[0]);
             if (context == null)

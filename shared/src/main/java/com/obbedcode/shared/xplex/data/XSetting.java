@@ -11,6 +11,8 @@ import androidx.annotation.Nullable;
 import com.obbedcode.shared.ICopyable;
 import com.obbedcode.shared.Str;
 import com.obbedcode.shared.db.IDatabaseSerial;
+import com.obbedcode.shared.db.SQLSnake;
+import com.obbedcode.shared.db.SnakeAction;
 import com.obbedcode.shared.helpers.ContentValueBuilder;
 import com.obbedcode.shared.helpers.StrBuilder;
 import com.obbedcode.shared.utils.CursorUtils;
@@ -23,6 +25,9 @@ public class XSetting extends XIdentity implements IDatabaseSerial, Parcelable {
     public String value;
 
     public static final XSetting DEFAULT = new XSetting(GLOBAL_IDENTITY, "null", "null");
+
+    public static XSetting create(XIdentity identity, String name, String value) { return new XSetting(identity, name, value); }
+    public static XSetting create(Integer user, String category, String name, String value) { return new XSetting(user, category, name, value); }
 
     public XSetting() { }
     public XSetting(XIdentity identity, String name, String value) { super(identity); this.name = name; this.value = value; }
@@ -58,6 +63,19 @@ public class XSetting extends XIdentity implements IDatabaseSerial, Parcelable {
                 .put(Table.FIELD_NAME, this.name)
                 .put(Table.FIELD_VALUE, this.value)
                 .build();
+    }
+
+    @Override
+    public void writeQuery(SQLSnake snake, SnakeAction wantedAction) {
+        if(snake != null) {
+            switch (wantedAction) {
+                case UPDATE:
+                case DELETE:
+                    super.writeQuery(snake, wantedAction);
+                    if(this.name != null) snake.whereColumn(Table.FIELD_NAME, this.name);
+                    break;
+            }
+        }
     }
 
     @Override

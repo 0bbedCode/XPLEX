@@ -11,6 +11,8 @@ import androidx.annotation.Nullable;
 import com.obbedcode.shared.ICopyable;
 import com.obbedcode.shared.Str;
 import com.obbedcode.shared.db.IDatabaseSerial;
+import com.obbedcode.shared.db.SQLSnake;
+import com.obbedcode.shared.db.SnakeAction;
 import com.obbedcode.shared.helpers.ContentValueBuilder;
 import com.obbedcode.shared.helpers.StrBuilder;
 import com.obbedcode.shared.utils.CursorUtils;
@@ -22,6 +24,10 @@ import java.util.List;
 public class XStartupSetting extends XIdentity implements IDatabaseSerial, Parcelable {
     public String receiverName;
     public Integer state;
+
+    public static final XStartupSetting DEFAULT = new XStartupSetting("null", 0);
+
+    public static XStartupSetting create(Integer user, String category, String receiverName, Integer state) { return new XStartupSetting(user, category, receiverName, state); }
 
     public XStartupSetting() { }
     public XStartupSetting(XIdentity identity, String receiverName, Integer state) { super(identity); this.receiverName = receiverName; this.state = state; }
@@ -56,6 +62,19 @@ public class XStartupSetting extends XIdentity implements IDatabaseSerial, Parce
                 .put(Table.FIELD_RECEIVER_NAME, receiverName)
                 .put(Table.FIELD_STATE, state)
                 .build();
+    }
+
+    @Override
+    public void writeQuery(SQLSnake snake, SnakeAction wantedAction) {
+        if(snake != null) {
+            switch (wantedAction) {
+                case UPDATE:
+                case DELETE:
+                    super.writeQuery(snake, wantedAction);
+                    if(this.receiverName != null) snake.whereColumn(Table.FIELD_RECEIVER_NAME, this.receiverName);
+                    break;
+            }
+        }
     }
 
     @Override
@@ -119,8 +138,8 @@ public class XStartupSetting extends XIdentity implements IDatabaseSerial, Parce
         public static final String FIELD_STATE = "state";
         public static final LinkedHashMap<String, String> COLUMNS = new LinkedHashMap<String, String>() {{
             put(FIELD_USER, "INTEGER");
-            put(FIELD_CATEGORY, "TEXT PRIMARY KEY");
-            put(FIELD_RECEIVER_NAME, "TEXT");
+            put(FIELD_CATEGORY, "TEXT");
+            put(FIELD_RECEIVER_NAME, "TEXT PRIMARY KEY");
             put(FIELD_STATE, "INTEGER");
         }};
     }

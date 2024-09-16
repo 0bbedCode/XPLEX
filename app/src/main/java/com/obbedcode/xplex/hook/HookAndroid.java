@@ -21,7 +21,7 @@ public class HookAndroid {
     private static final HookManager manager = new HookManager();
 
     public static void deployHook(final XC_LoadPackage.LoadPackageParam lpparam) {
-        if("android".equals(lpparam.packageName)) {
+        if("android".equalsIgnoreCase(lpparam.packageName)) {
             XLog.i(TAG, "Found (SYSTEM_SERVER) " + lpparam.packageName, true);
             try {
                 @SuppressLint("PrivateApi")

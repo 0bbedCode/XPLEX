@@ -209,6 +209,7 @@ public class StrBuilder {
 
 
     public StrBuilder appendFieldLine(String fieldName, String value) {
+        if(value != null && value.endsWith("\n")) value = value.substring(0, value.length() - 1);
         mSb.append(fieldName)
                 .append(STR_COLLEN)
                 .append(STR_SPACE)
@@ -326,5 +327,9 @@ public class StrBuilder {
 
     @NonNull
     @Override
-    public String toString() { return mSb.toString(); }
+    public String toString() {
+        String s = mSb.toString();
+        if(s.endsWith("\n")) return s.substring(0, s.length() - 1);
+        return s;
+    }
 }

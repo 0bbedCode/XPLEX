@@ -11,6 +11,7 @@ import com.obbedcode.shared.IXPService;
 import com.obbedcode.shared.IXplexService;
 import com.obbedcode.shared.api.XposedApi;
 import com.obbedcode.shared.data.XApp;
+import com.obbedcode.shared.helpers.StrBuilder;
 import com.obbedcode.shared.logger.XLog;
 import com.obbedcode.shared.usage.MemoryApi;
 import com.obbedcode.shared.usage.ProcessApi;
@@ -18,6 +19,8 @@ import com.obbedcode.shared.usage.RunningProcess;
 import com.obbedcode.shared.usage.UsageUtils;
 import com.obbedcode.shared.utils.PkgUtils;
 import com.obbedcode.shared.utils.RuntimeUtils;
+import com.obbedcode.shared.xplex.data.XStartupSetting;
+import com.obbedcode.shared.xplex.database.XDatabaseManager;
 import com.obbedcode.xplex.hook.TestSite;
 
 import java.util.ArrayList;
@@ -35,8 +38,15 @@ public class XplexService extends IXPService.Stub {
     }
 
     public IPackageManager packageManager;
+    //public XDatabaseManager xpDatabase;
+
     public XplexService(IPackageManager pms) {
         packageManager = pms;
+        //try {
+            //xpDatabase = XDatabaseManager.instance;
+        //}catch (Exception e) {
+        //    XLog.e(TAG, "Eror ror internal", true, true);
+        //}
         instance = this;
     }
 
@@ -45,7 +55,11 @@ public class XplexService extends IXPService.Stub {
 
     @Override
     public String getLog() throws RemoteException {
-        //TestSite.TestCPUStatOne();
+        try {
+
+        }catch (Exception e) {
+            XLog.e(TAG, "Error get log", true, true);
+        }
         return null;
     }
 

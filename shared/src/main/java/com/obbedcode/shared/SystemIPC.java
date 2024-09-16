@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.os.Process;
 
 import com.obbedcode.shared.logger.XLog;
-import com.obbedcode.shared.process.ProcHelper;
+import com.obbedcode.shared.usage.ProcessApi;
 
 import java.util.List;
 
@@ -35,7 +35,7 @@ public class SystemIPC {
 
     public SystemIPC bindCaller() {
         this.mUid = Process.myUid();
-        this.mCallingPackage = ProcHelper.getPackageName();
+        this.mCallingPackage = ProcessApi.getSelfPackageName();
         return this;
     }
 

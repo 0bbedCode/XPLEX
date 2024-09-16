@@ -10,6 +10,8 @@ import androidx.annotation.Nullable;
 import com.obbedcode.shared.ICopyable;
 import com.obbedcode.shared.Str;
 import com.obbedcode.shared.db.IDatabaseSerial;
+import com.obbedcode.shared.db.SQLSnake;
+import com.obbedcode.shared.db.SnakeAction;
 import com.obbedcode.shared.helpers.StrBuilder;
 import com.obbedcode.shared.utils.CursorUtils;
 
@@ -67,6 +69,17 @@ public class XIdentity implements IDatabaseSerial {
         cv.put("user", user);
         cv.put("category", category);
         return cv;
+    }
+
+    @Override
+    public void writeQuery(SQLSnake snake, SnakeAction wantedAction) {
+        //Should we ensure identity I mean if they or (I) fail to identify then fuck off ye ?
+        //BUT WHAT IF you forgot to set, o well
+        if(snake != null && this.user != null && this.category != null) {
+            if(!snake.hasConsumedId()) {
+                snake.whereIdentity(this.user, this.category);
+            }
+        }
     }
 
     @Override

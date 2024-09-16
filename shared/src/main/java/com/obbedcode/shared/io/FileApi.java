@@ -130,8 +130,7 @@ public class FileApi {
         String delimiter = getPathDelimiter(fileOrDirectory);
         if(delimiter == null) return fileOrDirectory;
         List<String> parts = getParts(fileOrDirectory, delimiter);
-        if(parts.isEmpty()) return File.separator;
-        if(parts.size() == 1) return delimiter;
+        if(parts.isEmpty() || parts.size() == 1) return delimiter;
         StringBuilder sb = new StringBuilder();
         sb.append(delimiter);
         int sz = parts.size() - 2;
@@ -147,11 +146,15 @@ public class FileApi {
 
     public static List<String> getParts(String fileOrDirectory, String overrideDelimiter) {
         List<String> parts = new ArrayList<>();
-        if(fileOrDirectory != null && fileOrDirectory.length() > 1) {
+        if(fileOrDirectory != null && !fileOrDirectory.isEmpty()) {
             String del = overrideDelimiter == null ? getPathDelimiter(fileOrDirectory) : overrideDelimiter;
             if(del != null) {
                 String trimmed = Str.trim(fileOrDirectory, del, true, false);
-                if(!trimmed.contains(del)) return parts;
+                if(!trimmed.contains(del)) {
+                    parts.add(trimmed);
+                    return parts;
+                }
+
                 String[] splits = trimmed.split(Pattern.quote(del));
                 for(String s : splits)
                     if(!s.isEmpty())

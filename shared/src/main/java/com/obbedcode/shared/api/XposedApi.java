@@ -8,8 +8,9 @@ import android.os.Process;
 import android.text.TextUtils;
 
 import com.obbedcode.shared.logger.XLog;
-import com.obbedcode.shared.process.ProcHelper;
 import com.obbedcode.shared.SystemIPC;
+import com.obbedcode.shared.usage.ProcessApi;
+import com.obbedcode.shared.usage.ProcessUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +58,7 @@ public class XposedApi {
             try {
                 Bundle call = SystemIPC.create()
                         .setUid(Process.myUid())
-                        .setCallingPackage(ProcHelper.getPackageName())
+                        .setCallingPackage(ProcessApi.getSelfPackageName())
                         .setMethod("apps")
                         .callToProvider();
                 expApps.addAll(call.getStringArrayList("apps"));

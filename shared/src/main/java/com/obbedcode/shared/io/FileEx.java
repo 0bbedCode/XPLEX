@@ -57,6 +57,8 @@ public class FileEx extends File {
     @Override
     public boolean mkdirs() { return exists() || super.mkdirs(); }
 
+    public FileEx getDirectory() { return new FileEx(FileApi.getParent(getAbsolutePath())); }
+
     public FileEx getParentEx() { return getParentEx(false); }
     public FileEx getParentEx(boolean isFileOverride) {
         if(isFileOverride || isFile()) return new FileEx(FileApi.getParent(FileApi.getParent(getAbsolutePath())));
@@ -68,7 +70,7 @@ public class FileEx extends File {
 
     public void setPermissions(ModePermission ownerPermissions, ModePermission groupPermissions, ModePermission otherPermissions) {
         FileApi.chmod(getAbsolutePath(), ChmodModeBuilder.create()
-                .setOwnerPermissions(otherPermissions)
+                .setOwnerPermissions(ownerPermissions)
                 .setGroupPermissions(groupPermissions)
                 .setOtherPermissions(otherPermissions)
                 .getMode(), isDirectory());

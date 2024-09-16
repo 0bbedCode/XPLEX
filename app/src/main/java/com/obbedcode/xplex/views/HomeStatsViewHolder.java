@@ -65,6 +65,7 @@ public class HomeStatsViewHolder extends BaseViewHolder<Object> {
                         ThreadUtils.sleep(1500);
                         IXPService serv = ServiceClient.waitForService();
                         if(serv != null) {
+                            Log.d(TAG, "Some Log should be null: " + serv.getLog());
                             int ramUsage = (int)Math.round(serv.getOverallMemoryUsage());
                             int cpuUsage = (int)Math.round(serv.getOverallCpuUsage());
 
@@ -78,6 +79,8 @@ public class HomeStatsViewHolder extends BaseViewHolder<Object> {
                                pbCpu.setProgress(cpuUsage);
                                tvCpu.setText(cpuUsageStr);
                             });
+                        } else {
+                            XLog.e(TAG, "Service is NULL failed to wait for it...");
                         }
                     }
                 }catch (Exception e) {

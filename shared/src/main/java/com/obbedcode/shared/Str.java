@@ -2,6 +2,8 @@ package com.obbedcode.shared;
 
 import android.text.TextUtils;
 
+import com.obbedcode.shared.helpers.StrBuilder;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,6 +20,13 @@ public class Str {
     public static final Character SPACE_CHAR = ' ';
 
     public static boolean safeEqualsIgnoreCase(String a, String b) { return a == null ? b == null : a.equalsIgnoreCase(b); }
+
+    public static String concat(Object a, Object b) {
+        return StrBuilder.create()
+                .appendLine(a == null ? "null(a)" : a.toString())
+                .appendLine(b == null ? "null(b)" : b.toString())
+                .toString();
+    }
 
     public static String getFirstElementIsNumber(String[] elements) { return getFirstElementIsNumber(elements, null); }
     public static String getFirstElementIsNumber(String[] elements, String defaultValue) {
