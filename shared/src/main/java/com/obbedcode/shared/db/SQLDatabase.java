@@ -41,7 +41,6 @@ public class SQLDatabase {
                 getDatabaseDirectoryCustom(null) + File.separator + databaseNameOrPath :
                 databaseNameOrPath, false, false);
         parentDirectory = file.getDirectory();
-        XLog.i(TAG, "DB = " + this, true);
         ensureDirectoryExists();
     }
 
@@ -74,15 +73,10 @@ public class SQLDatabase {
     @SuppressWarnings("unused")
     public void ensureDirectoryExists() {
         try {
-            XLog.i(TAG, "Setting Directory Permissions");
             if(!XposedUtils.isVirtualXposed()) {
-                XLog.i(TAG, "IS not VXP");
                 if(parentDirectory.mkdirs()) {
-                    XLog.i(TAG, "MADE DIR OR EXISTS");
                     parentDirectory.takeOwnership();
-                    XLog.i(TAG, "TAKE OWNERSHIP");
                     parentDirectory.setPermissions(ModePermission.READ_WRITE_EXECUTE, ModePermission.READ_WRITE_EXECUTE, ModePermission.NONE);
-                    XLog.i(TAG, "SET PERMS");
                 }
             }
         } catch (Exception e) {
@@ -332,14 +326,20 @@ public class SQLDatabase {
         String top = "CREATE TABLE IF NOT EXISTS " + tableName + " (";
         StringBuilder mid = new StringBuilder();
 
+        String pValue = columns.remove("PRIMARY");
         int i = 1;
         int sz = columns.size();
         for(Map.Entry<String, String> r : columns.entrySet()) {
             String l = r.getKey() + " " + r.getValue();
             mid.append(l);
             //if(i == 1) mid.append(" PRIMARY KEY");
-            if(sz != i)  mid.append(",");
+            //if(sz != i)  mid.append(",");
+            if(i < sz) mid.append(", ");
             i++;
+        }
+
+        if(pValue != null) {
+            mid.append(", PRIMARY ").append(pValue);
         }
 
         return top + mid + ");";

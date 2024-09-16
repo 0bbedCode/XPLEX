@@ -5,6 +5,7 @@ import android.content.Context;
 import com.obbedcode.shared.db.IDatabaseManage;
 import com.obbedcode.shared.db.SQLDatabase;
 import com.obbedcode.shared.db.SQLSnake;
+import com.obbedcode.shared.logger.XLog;
 import com.obbedcode.shared.xplex.data.XSetting;
 import com.obbedcode.shared.xplex.data.XStartupSetting;
 

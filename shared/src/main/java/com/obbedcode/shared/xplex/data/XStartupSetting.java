@@ -139,8 +139,9 @@ public class XStartupSetting extends XIdentity implements IDatabaseSerial, Parce
         public static final LinkedHashMap<String, String> COLUMNS = new LinkedHashMap<String, String>() {{
             put(FIELD_USER, "INTEGER");
             put(FIELD_CATEGORY, "TEXT");
-            put(FIELD_RECEIVER_NAME, "TEXT PRIMARY KEY");
+            put(FIELD_RECEIVER_NAME, "TEXT");
             put(FIELD_STATE, "INTEGER");
+            put("PRIMARY", "KEY(" + FIELD_USER + ", " + FIELD_CATEGORY + ", " + FIELD_RECEIVER_NAME + ")");//KEY(user, category, receiverName)
         }};
     }
 }

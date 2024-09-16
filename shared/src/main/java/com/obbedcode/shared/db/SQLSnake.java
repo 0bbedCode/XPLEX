@@ -565,7 +565,7 @@ public class SQLSnake extends SQLQueryBuilder {
         return StrBuilder
                 .create(super.toString(), true)
                 .appendFieldLine("Can Compile", this.mCanCompile)
-                .appendFieldLine("Error", this.mError.getMessage())
+                .appendFieldLine("Error", this.mError)
                 .appendFieldLine("Database", this.mDatabase)
                 .toString();
     }

@@ -47,7 +47,7 @@ public class SQLQueryBuilder {
     private boolean mHasEntriesPassedId = false;
     private boolean mHasConsumedId = false;
     private int mColumnCount = 0;
-    private String mOpSymbol  = OP_OR;
+    private String mOpSymbol  = OP_AND;
     private String mOpBitwise = BITWISE_EQUALS;
     public int getColumnCount() { return mColumnCount; }
     public String getOpSymbol() { return mOpSymbol; }
@@ -74,6 +74,18 @@ public class SQLQueryBuilder {
     public SQLQueryBuilder() { }
     public SQLQueryBuilder(String tableName) { this.tableName = tableName; }
     public SQLQueryBuilder(String tableName, boolean pushColumnIfNullValue) { this.tableName = tableName; this.mPushColumnIfNull = pushColumnIfNullValue; }
+
+    @SuppressWarnings("unused")
+    public SQLQueryBuilder or() {
+        this.mOpSymbol = OP_OR;
+        return this;
+    }
+
+    @SuppressWarnings("unused")
+    public SQLQueryBuilder and() {
+        this.mOpSymbol = OP_AND;
+        return this;
+    }
 
     @SuppressWarnings("unused")
     public SQLQueryBuilder consumedId(boolean hasConsumedId) {
