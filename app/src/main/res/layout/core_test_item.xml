@@ -36,4 +36,6 @@
         app:layout_constraintStart_toEndOf="@+id/iv_core_item_icon"
         app:layout_constraintTop_toTopOf="@+id/iv_core_item_icon" />
 
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

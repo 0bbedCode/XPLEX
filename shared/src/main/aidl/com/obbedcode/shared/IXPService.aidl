@@ -5,6 +5,8 @@ package com.obbedcode.shared;
 import com.obbedcode.shared.data.XApp;
 import com.obbedcode.shared.data.XApp;
 
+import com.obbedcode.shared.xplex.data.XSetting;
+
 import com.obbedcode.shared.usage.RunningProcess;
 
 interface IXPService {
@@ -23,6 +25,8 @@ interface IXPService {
     double getOverallMemoryUsage();
 
     List<RunningProcess> getRunningProcesses();
+
+    List<XSetting> getAppHookSettings(int userId, String category);
 
     //How can I add to my interface a more advance type like
     //List<XApp> XApp being (com.obbedcode.shared.data.XApp)

@@ -85,6 +85,9 @@ public class RuntimeUtils {
         //https://android.googlesource.com/platform/prebuilts/fullsdk/sources/android-29/+/refs/heads/androidx-core-release/java/lang/Throwable.java
         //https://cs.android.com/android/platform/superproject/main/+/main:libcore/ojluni/src/main/java/java/lang/Throwable.java
         //https://github.com/xdtianyu/android-6.0.0_r1/blob/master/libcore/luni/src/main/java/java/lang/Throwable.java
+
+
+
         if(!HiddenApiUtils.bypassHiddenApiRestrictions()) {
             Log.e(TAG, "Failed to bypass Hidden API Restrictions, used for [getStackTraceSafe]. Using fall back generic API.");
             return thr == null ? new Throwable().getStackTrace() : thr.getStackTrace();

@@ -7,8 +7,8 @@ import android.os.RemoteCallbackList;
 
 import com.obbedcode.shared.hook.HookManager;
 import com.obbedcode.shared.logger.XLog;
+import com.obbedcode.shared.service.UserService;
 import com.obbedcode.shared.utils.RuntimeUtils;
-import com.obbedcode.xplex.service.UserService;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;

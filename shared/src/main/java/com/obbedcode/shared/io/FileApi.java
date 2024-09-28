@@ -1,6 +1,7 @@
 package com.obbedcode.shared.io;
 
 import android.os.Debug;
+import android.os.ParcelFileDescriptor;
 import android.os.Process;
 import android.system.Os;
 import android.system.OsConstants;
@@ -12,8 +13,12 @@ import androidx.annotation.Nullable;
 import com.obbedcode.shared.BuildConfig;
 import com.obbedcode.shared.Str;
 import com.obbedcode.shared.logger.XLog;
+import com.obbedcode.shared.utils.StreamUtils;
 
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -187,6 +192,38 @@ public class FileApi {
                 if(i != lst) sb.append(File.separator);
             } return sb.toString();
         } return null;
+    }
+
+    public static FileDescriptor generateFakeFileDescriptor(String contents) {
+        File mockFile = generateTempFakeFile(contents);
+        if(mockFile == null)
+            return null;
+        try {
+            ParcelFileDescriptor pFileDescriptor = ParcelFileDescriptor.open(mockFile, ParcelFileDescriptor.MODE_READ_ONLY);//0x10000000
+            return pFileDescriptor.getFileDescriptor();
+        }catch (Exception e) {
+            XLog.e(TAG,"Failed to Create Fake File Descriptor!! Error: " + e, true);
+            return null;
+        }
+    }
+
+
+    public static File generateTempFakeFile(String contents) {
+        FileOutputStream fos = null;
+        OutputStreamWriter osw = null;
+        try {
+            File temp = File.createTempFile("temp", null);
+            fos = new FileOutputStream(temp, false);
+            osw = new OutputStreamWriter(fos);
+            osw.write(contents);
+            return temp;
+        }catch (Exception e) {
+            XLog.e(TAG, "Failed to Create Fake File! Error: " + e, true) ;
+            return null;
+        }finally {
+            StreamUtils.close(osw, true);
+            StreamUtils.close(fos);
+        }
     }
 
     public static String getPathDelimiter(String path) { return getPathDelimiter(path, false); }

@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 //Now this interface when given is safe no need to caller UID checks
-public class XplexService extends IXPService.Stub {
+/*public class XplexService extends IXPService.Stub {
     private static final String TAG = "ObbedCode.XP.XplexService";
 
     public static XplexService instance = null;
@@ -126,4 +126,4 @@ public class XplexService extends IXPService.Stub {
     public List<RunningProcess> getRunningProcesses() throws RemoteException {
         return RunningProcess.getRunningProcesses(true);
     }
-}
+}*/

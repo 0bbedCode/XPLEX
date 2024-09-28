@@ -1,6 +1,7 @@
 package com.obbedcode.xplex.views;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Process;
 import android.text.Html;
@@ -15,14 +16,15 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.obbedcode.shared.logger.XLog;
+import com.obbedcode.shared.PrefManager;
 import com.obbedcode.shared.settings.LocalSettings;
-import com.obbedcode.xplex.AppBarActivity;
+import com.obbedcode.xplex.views.activity.app.AppBarActivity;
 import com.obbedcode.xplex.uiex.dialogs.DialogInterfaceEx;
 import com.obbedcode.xplex.utils.AppIconCache;
 import com.obbedcode.xplex.R;
 import com.obbedcode.xplex.databinding.MainHomeActivityBinding;
 import com.obbedcode.xplex.databinding.AboutDialogBinding;
+import com.obbedcode.xplex.views.activity.apps.AppsActivity;
 
 public class HomeActivity extends AppBarActivity implements DialogInterfaceEx.OnPositiveDoneEvent {
     private static final String TAG = "ObbedCode.XPL.HomeActivity";
@@ -40,6 +42,8 @@ public class HomeActivity extends AppBarActivity implements DialogInterfaceEx.On
         RecyclerView rv = mBinding.list;
         rv.setAdapter(adapter);
 
+        PrefManager.ensureOpen(this);
+
         rikka.recyclerview.RecyclerViewKt.fixEdgeEffect(rv, true, true);
         rikka.recyclerview.RecyclerViewKt.addItemSpacing(rv, 0, 4f, 0, 4f, TypedValue.COMPLEX_UNIT_DIP);
         rikka.recyclerview.RecyclerViewKt.addEdgeSpacing(rv, 16f, 4f, 16f, 4f, TypedValue.COMPLEX_UNIT_DIP);
@@ -55,7 +59,6 @@ public class HomeActivity extends AppBarActivity implements DialogInterfaceEx.On
 
     @Override
     public void onPositiveDone(Bundle data, int dialogId) {
-        XLog.i(TAG, "INVOKING ON POSITIVE DONEE = " + dialogId);
         if(data != null && !data.isEmpty()) {
             switch (dialogId) {
                 case GlobalDialogs.DIALOG_USERNAME:
@@ -80,12 +83,11 @@ public class HomeActivity extends AppBarActivity implements DialogInterfaceEx.On
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
-
-
         switch (item.getItemId()) {
             case R.id.action_about:
-                AboutDialogBinding binding = AboutDialogBinding.inflate(LayoutInflater.from(this));
+                startActivity(new Intent(this, AppsActivity.class));
+
+                /*AboutDialogBinding binding = AboutDialogBinding.inflate(LayoutInflater.from(this));
                 binding.aboutText.setText(Html.fromHtml(getString(R.string.message_about)));
                 binding.icon.setImageBitmap(AppIconCache.INSTANCE.getOrLoadBitmap(
                         this,
@@ -94,7 +96,7 @@ public class HomeActivity extends AppBarActivity implements DialogInterfaceEx.On
                         getResources().getDimensionPixelOffset(R.dimen.default_app_icon_size)));
 
                 new MaterialAlertDialogBuilder(this)
-                        .setView(binding.getRoot()).show();
+                        .setView(binding.getRoot()).show();*/
 
 
 

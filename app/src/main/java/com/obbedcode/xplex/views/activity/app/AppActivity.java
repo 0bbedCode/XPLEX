@@ -1,14 +1,27 @@
-package com.obbedcode.xplex;
+package com.obbedcode.xplex.views.activity.app;
 
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Build;
+import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.android.material.behavior.HideBottomViewOnScrollBehavior;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.obbedcode.xplex.R;
 import com.obbedcode.xplex.utils.ThemeHelper;
+import com.obbedcode.xplex.views.fragment.apps.AppsPagerFragment;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import rikka.material.app.MaterialActivity;
 

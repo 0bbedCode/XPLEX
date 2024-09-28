@@ -35,8 +35,6 @@ public class HomeAdapter extends IdBasedRecyclerViewAdapter  {
 
 
     public void updateView(int dialogCode) {
-
-        XLog.i(TAG, "Updating Viewww " + dialogCode);
         switch (dialogCode) {
             case GlobalDialogs.DIALOG_USERNAME:
                // Object obj = IdRecyclerViewUtils.getObjectFromId(this, ID_WELCOME);

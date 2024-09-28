@@ -137,33 +137,35 @@ public class UidProcessObserver {
                         }
                     });
                 } else {
-                    if(Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-                        try {
-                            mUidObserverAdapter = new UidObserverAdapter() {
-                                @Override
-                                public void onUidActive(int uid) throws RemoteException {
-                                    if(mUid == uid) {
-                                        mNotifyUidEvent.onUidActive(uid);
-                                        if(stopWhenFound) mIsMonitoring = false;
-                                        if(!mIsMonitoring) stop();  // ActivityManagerApis.unregisterUidObserver(this);
-                                    }
+                    XLog.e(TAG, "Error Failed to Start UID Observer as Method is missing [getRunningAppProcesses]", true, true);
+                }
+            } else {
+                if(Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+                    try {
+                        mUidObserverAdapter = new UidObserverAdapter() {
+                            @Override
+                            public void onUidActive(int uid) throws RemoteException {
+                                if(mUid == uid) {
+                                    mNotifyUidEvent.onUidActive(uid);
+                                    if(stopWhenFound) mIsMonitoring = false;
+                                    if(!mIsMonitoring) stop();  // ActivityManagerApis.unregisterUidObserver(this);
                                 }
-                            };
+                            }
+                        };
 
-                            XLog.i(TAG, "Starting UID Observer [registerUidObserver] UID: " + mUid + " [UID_OBSERVER_ACTIVE][" + UID_OBSERVER_ACTIVE + "] [PROCESS_STATE_UNKNOWN][" + PROCESS_STATE_UNKNOWN + "]", true);
-                            ActivityManagerApis.registerUidObserver(
-                                    mUidObserverAdapter,
-                                    UID_OBSERVER_ACTIVE,
-                                    PROCESS_STATE_UNKNOWN,
-                                    null);
-                        }catch (Exception innerE) {
-                            XLog.e(TAG, "Error for Monitoring [registerUidObserver] Error: " + innerE.getMessage() + " UID: " + mUid, true, true);
-                            mIsMonitoring = false;
-                        }
-                    } else {
-                        XLog.e(TAG, "Failed to Monitor UID as Android is less than [M] API Level [23], yet Old method has not been selected for Monitoring.", true, true);
+                        XLog.i(TAG, "Starting UID Observer [registerUidObserver] UID: " + mUid + " [UID_OBSERVER_ACTIVE][" + UID_OBSERVER_ACTIVE + "] [PROCESS_STATE_UNKNOWN][" + PROCESS_STATE_UNKNOWN + "]", true);
+                        ActivityManagerApis.registerUidObserver(
+                                mUidObserverAdapter,
+                                UID_OBSERVER_ACTIVE,
+                                PROCESS_STATE_UNKNOWN,
+                                null);
+                    }catch (Exception innerE) {
+                        XLog.e(TAG, "Error for Monitoring [registerUidObserver] Error: " + innerE.getMessage() + " UID: " + mUid, true, true);
                         mIsMonitoring = false;
                     }
+                } else {
+                    XLog.e(TAG, "Failed to Monitor UID as Android is less than [M] API Level [23], yet Old method has not been selected for Monitoring.", true, true);
+                    mIsMonitoring = false;
                 }
             }
         }

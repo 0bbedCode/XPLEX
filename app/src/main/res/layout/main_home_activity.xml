@@ -18,3 +18,4 @@
     app:fitsSystemWindowsInsets="bottom|top"
     app:layoutManager="@string/main_layout_manager"
     app:spanCount="2" />
+

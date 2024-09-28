@@ -13,7 +13,7 @@ import com.obbedcode.shared.logger.XLog;
 
 //Provider, will get the "call" command
 //We UID observe when our UID is present we link our Process to the Service
-public class ServiceProvider extends ContentProvider {
+/*public class ServiceProvider extends ContentProvider {
     private static final String TAG = "ObbedCode.XP.ServiceProvider";
 
     @Override
@@ -44,4 +44,4 @@ public class ServiceProvider extends ContentProvider {
         ServiceClient.linkService(binder);
         return new Bundle();
     }
-}
+}*/

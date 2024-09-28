@@ -124,7 +124,7 @@ public class ProcessApi {
             }catch (Exception e) {
                 XLog.e(TAG, "Failed to Read /proc/self/cmdline File for Process Name, Error: " + e.getMessage(), true);
             } finally {
-                StreamUtils.dispose(fileReader);
+                StreamUtils.close(fileReader);
             }
         } return getSelfPackageName();
     }

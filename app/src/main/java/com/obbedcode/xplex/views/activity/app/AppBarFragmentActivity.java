@@ -1,6 +1,5 @@
-package com.obbedcode.xplex.views;
+package com.obbedcode.xplex.views.activity.app;
 
-import com.obbedcode.xplex.AppBarActivity;
 import com.obbedcode.xplex.R;
 
 public abstract class AppBarFragmentActivity extends AppBarActivity {

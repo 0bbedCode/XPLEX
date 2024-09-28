@@ -14,12 +14,12 @@ import android.widget.TextView;
 
 import com.obbedcode.shared.IXPService;
 import com.obbedcode.shared.logger.XLog;
+import com.obbedcode.shared.service.ServiceClient;
 import com.obbedcode.shared.utils.ThreadUtils;
 import com.obbedcode.shared.utils.UsageUtils;
 import com.obbedcode.xplex.R;
 import com.obbedcode.xplex.databinding.MainCardContainerBinding;
 import com.obbedcode.xplex.databinding.MainCardStatsBinding;
-import com.obbedcode.xplex.service.ServiceClient;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

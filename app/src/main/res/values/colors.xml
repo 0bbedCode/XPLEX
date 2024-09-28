@@ -12,4 +12,6 @@
     <color name="progress_secondary">#B3E5FC</color>
     <color name="progress_primary">#03A9F4</color>
     <color name="ripple_color">#20000000</color>
+    <color name="searchBar">#e7ecf6</color>
+
 </resources>

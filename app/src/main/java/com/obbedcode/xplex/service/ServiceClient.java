@@ -24,7 +24,7 @@ import java.util.List;
 //
 //This is for the Client, will contact actual XplexService (ServiceClient.getLogs() => HMAService.getLogs())
 //
-public class ServiceClient extends IXPService.Stub implements IBinder.DeathRecipient {
+/*public class ServiceClient extends IXPService.Stub implements IBinder.DeathRecipient {
     private static final String TAG = "ObbedCode.XP.ServiceClient";
     private static IXPService service;
 
@@ -94,4 +94,4 @@ public class ServiceClient extends IXPService.Stub implements IBinder.DeathRecip
 
     @Override
     public List<XApp> getInstalledAppsEx() throws RemoteException { return service.getInstalledAppsEx(); }
-}
+}*/

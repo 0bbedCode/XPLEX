@@ -1,4 +1,4 @@
-package com.obbedcode.xplex;
+package com.obbedcode.xplex.views.activity.app;
 
 import android.graphics.Color;
 import android.os.Build;
@@ -12,7 +12,7 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import com.obbedcode.xplex.uiex.dialogs.DialogInterfaceEx;
+import com.obbedcode.xplex.R;
 
 public abstract class AppBarActivity extends AppActivity {
     //Do we use app bar activity for everything ?

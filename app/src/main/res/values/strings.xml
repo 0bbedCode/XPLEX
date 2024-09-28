@@ -15,7 +15,7 @@
     <string name="card_test_title">Core Tests</string>
     <string name="card_test_summary">Core tests to ensure Application is running at its best!</string>
 
-    <string name="card_welcome_title">Welcome to XPL-EX! v8</string>
+    <string name="card_welcome_title">Welcome to XPL-EX! v62</string>
     <string name="card_welcome_summary">Welcome:</string>
 
     <string name="text_test_root">Root Access</string>
@@ -34,6 +34,25 @@
     <string name="text_username">Username</string>
 
     <string name="text_ok">Ok</string>
+
+
+    <string name="filter_reset">Reset</string>
+    <string name="filter_filter">Filter</string>
+    <string name="filter_sort_by">Sort By</string>
+    <string name="filter_sort_filter">Sort and Filter</string>
+    <string name="filter_sort_by_default">The default sorting method has been switched to</string>
+
+
+
+    <string name="tab_user_apps">user</string>
+    <string name="tab_configured_apps">configured</string>
+    <string name="tab_system_apps">system Apps</string>
+
+    <string name="filter_reverse">Reverse</string>
+
+
+    <string name="nav_apps">Apps</string>
+
 
     <string name="message_about">
          <![CDATA[<br><br>]]> Hello this is ObbedCode, this Project (was) based off of XPrivacy Lua til I decided to take it into a new direction put over 40000+ new lines of Code into it.

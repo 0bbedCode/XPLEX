@@ -453,7 +453,7 @@ public class ProcessUtils {
                     }catch (Exception innerEx) { XLog.e(TAG, "Failed to Parse Line in File: " + file + " Line: " + line + " Error: " + innerEx.getMessage()); }
                 }
             }catch (Exception ex) { XLog.e(TAG, "Failed to read CPU File: " + file + " Error: " + ex.getMessage()); }
-            finally { StreamUtils.dispose(reader); }
+            finally { StreamUtils.close(reader); }
         } return -1;
     }
 }

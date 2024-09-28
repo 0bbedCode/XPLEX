@@ -14,7 +14,7 @@ import com.obbedcode.shared.utils.PkgUtils;
 import com.obbedcode.shared.utils.ServiceUtils;
 
 
-public class UserService {
+/*public class UserService {
     private static final String TAG = "ObbedCode.XP.UserService";
 
     private static int appUid = 0;
@@ -56,6 +56,6 @@ public class UserService {
                     }catch (Exception e) {
                         XLog.e(TAG, "UidObserver Error: " + e.getMessage(), true, true);
                     }
-                }).startMonitorOnActive(false);
+                }).start(false);
     }
-}
+}*/

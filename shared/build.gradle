@@ -9,7 +9,7 @@ android {
 
     sourceSets {
         main {
-            aidl.srcDirs = ['src/main/aidl', 'src/main/java', 'src/main/aidl/com/obbedcode/shared/data', 'src/main/aidl/com/obbedcode/shared/usage']
+            aidl.srcDirs = ['src/main/aidl', 'src/main/java', 'src/main/aidl/com/obbedcode/shared/data', 'src/main/aidl/com/obbedcode/shared/usage', 'src/main/aidl/com/obbedcode/shared/xplex/data']
             //            aidl.srcDirs = ['app/src/main/aidl/obbedcode/shared', 'app/src/main/aidl', 'src/main/aidl', 'main/aidl']
             //aidl/com/obbedcode/shared/IXplexService.aidl
         }

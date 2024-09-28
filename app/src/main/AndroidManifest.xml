@@ -30,7 +30,7 @@
         
         <provider
             android:authorities="com.obbedcode.xplex.ServiceProvider"
-            android:name="com.obbedcode.xplex.service.ServiceProvider"
+            android:name="com.obbedcode.shared.service.ServiceProvider"
             android:exported="true"
             tools:ignore="ExportedContentProvider"/>
 
@@ -43,6 +43,14 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".views.activity.apps.AppsActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Xplex">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
         </activity>
     </application>
 
