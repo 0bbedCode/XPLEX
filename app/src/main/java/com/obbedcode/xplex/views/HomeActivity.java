@@ -3,10 +3,7 @@ package com.obbedcode.xplex.views;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Process;
-import android.text.Html;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -15,16 +12,14 @@ import androidx.annotation.Nullable;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.obbedcode.shared.PrefManager;
 import com.obbedcode.shared.settings.LocalSettings;
+import com.obbedcode.xplex.views.activity.AppsActivity;
 import com.obbedcode.xplex.views.activity.app.AppBarActivity;
 import com.obbedcode.xplex.uiex.dialogs.DialogInterfaceEx;
-import com.obbedcode.xplex.utils.AppIconCache;
 import com.obbedcode.xplex.R;
 import com.obbedcode.xplex.databinding.MainHomeActivityBinding;
-import com.obbedcode.xplex.databinding.AboutDialogBinding;
-import com.obbedcode.xplex.views.activity.apps.AppsActivity;
+import com.obbedcode.xplex.views.activity.apps.AppsActivityy;
 
 public class HomeActivity extends AppBarActivity implements DialogInterfaceEx.OnPositiveDoneEvent {
     private static final String TAG = "ObbedCode.XPL.HomeActivity";

@@ -101,12 +101,10 @@ public class XplexService extends IXPService.Stub {
     public double getOverallMemoryUsage() throws RemoteException { return UsageUtils.calculateMemoryUsage(MemoryApi.getMemoryInfoFromService()); }
 
     @Override
-    public List<XApp> getInstalledAppsEx() throws RemoteException {
+    public ParceledListSlice<XApp> getInstalledAppsEx() throws RemoteException {
         XLog.i(TAG, "zer0def for TaiChi Support");
         List<XApp> apps = new ArrayList<>();
         try {
-
-            //Do Dynamic User ID ?
             List<ApplicationInfo> pkgInfos = PkgUtils.getInstalledApplicationsCompat(packageManager,0, 0);
             for(ApplicationInfo ai : pkgInfos) {
                 XApp app = new XApp(ai, packageManager);
@@ -114,7 +112,10 @@ public class XplexService extends IXPService.Stub {
             }
         }catch (Exception e) {
             XLog.e(TAG, "Failed to Get a List of Installed Apps on the Device, Service Error: " + e.getMessage(), true);
-        } return apps;
+        }
+
+        return new ParceledListSlice<>(apps);
+
     }
 
     @Override

@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 
 import com.obbedcode.shared.IXPService;
+import com.obbedcode.shared.UiGlobals;
 import com.obbedcode.shared.api.ApplicationApi;
 import com.obbedcode.shared.data.XApp;
 import com.obbedcode.shared.logger.XLog;
+import com.obbedcode.shared.service.ParceledListSlice;
 import com.obbedcode.shared.service.ServiceClient;
 
 import java.util.ArrayList;
@@ -19,15 +21,14 @@ import kotlin.Pair;
 public class AppRepository {
     private static final String TAG = "ObbedCode.XP.AppRepository";
 
-
-    private static IXPService serv = ServiceClient.waitForService();
-
+    private static final IXPService XP_SERVICE = ServiceClient.waitForService();
 
     public static List<XApp> getInstalledApps(Context context, boolean isSystem) {
         List<XApp> apps = new ArrayList<>();
         PackageManager pm = context.getPackageManager();
         try {
-            apps = serv.getInstalledAppsEx();
+            ParceledListSlice<XApp> parceledApps = XP_SERVICE.getInstalledAppsEx();
+            apps = parceledApps.getList();
             List<XApp> filtered = new ArrayList<>();
             for(XApp app : apps) {
                 app.appName = pm.getApplicationLabel(app.info).toString();
@@ -38,11 +39,12 @@ public class AppRepository {
                     filtered.add(app);
                 else if(!isSystem && !app.isSystem)
                     filtered.add(app);
-
             }
 
             return filtered;
-        }catch (Exception ignored) { }
+        }catch (Exception e) {
+            XLog.e(TAG, "Error Getting Apps over IPC: " + e);
+        }
         return apps;
     }
 
@@ -50,24 +52,17 @@ public class AppRepository {
             List<XApp> apps,
             Pair<String, List<String>> filter,
             String keyword,
-            boolean isReverse
-    ) {
-        XLog.i(TAG, "[getFilteredAndSortedApps] ... Starting... Is Reversed: " + isReverse);
+            boolean isReverse) {
+        if(apps.isEmpty()) return apps;
         Comparator<XApp> comparator = getComparator(filter.getFirst(), isReverse);
-        XLog.i(TAG, "[getFilteredAndSortedApps] Comparator Created....");
         List<XApp> filteredApps = new ArrayList<>();
         for (XApp app : apps) {
             if (isAppMatchingCriteria(app, keyword, filter.getSecond())) {
-                //XLog.i(TAG, "[getFilteredAndSortedApps] Matches Criteria: " + app.appName);
                 filteredApps.add(app);
-            }else {
-                XLog.i(TAG, "[getFilteredAndSortedApps] Does Not Match: " + app.appName);
             }
         }
 
-        XLog.i(TAG, "[getFilteredAndSortedApps] Sorting Collection...");
         Collections.sort(filteredApps, comparator);
-        XLog.i(TAG, "[getFilteredAndSortedApps] Sorted Returning Size: " + filteredApps.size());
         return filteredApps;
     }
 
@@ -81,13 +76,14 @@ public class AppRepository {
 
         for (String criteria : filterCriteria) {
             switch (criteria) {
-                case "Configured": //已配置
-                    if (!app.isEnabled) return false;   //This is wrong ??
-                    break;
-                case "Recently Updated":    //最近更新
+                case UiGlobals.FILTER_CONFIGURED: //已配置
+                    return false;//For now
+                    //if (!app.isEnabled) return false;   //This is wrong ??, yes
+                    //break;
+                case UiGlobals.FILTER_LAST_UPDATE:    //最近更新
                     if (System.currentTimeMillis() - app.lastUpdateTime >= 3 * 24 * 3600 * 1000L) return false;
                     break;
-                case "Disabled":     //已禁用
+                case UiGlobals.FILTER_DISABLED:     //已禁用
                     if (app.isEnabled) return false;
                     break;
             }
@@ -97,15 +93,14 @@ public class AppRepository {
     }
 
     public static Comparator<XApp> getComparator(String sortBy, boolean isReverse) {
-        XLog.i(TAG, "[getComparator] SortBy: " + sortBy + " IsReverse: " + isReverse);
         Comparator<XApp> comparator;
         switch (sortBy) {
-            case "App Size":            //应用大小
+            case UiGlobals.SORT_APP_SIZE:            //应用大小
                 comparator = new Comparator<XApp>() {
                     @Override
                     public int compare(XApp a1, XApp a2) { return Long.compare(a1.size, a2.size); }
                 };                break;
-            case "Last updated":        //最近更新时间
+            case UiGlobals.FILTER_LAST_UPDATE:        //最近更新时间
                 comparator = new Comparator<XApp>() {
                     @Override
                     public int compare(XApp a1, XApp a2) {
@@ -113,13 +108,13 @@ public class AppRepository {
                     }
                 };
                 break;
-            case "Installation Date":   //安装日期
+            case UiGlobals.SORT_INSTALL_DATE:   //安装日期
                 comparator = new Comparator<XApp>() {
                     @Override
                     public int compare(XApp a1, XApp a2) { return Long.compare(a1.firstInstallTime, a2.firstInstallTime); }
                 };
                 break;
-            case "Target SDK":          //Target 版本
+            case UiGlobals.SORT_TARGET_SDK:          //Target 版本
                 comparator = new Comparator<XApp>() {
                     @Override
                     public int compare(XApp a1, XApp a2) { return Integer.compare(a1.targetSdk, a2.targetSdk); }

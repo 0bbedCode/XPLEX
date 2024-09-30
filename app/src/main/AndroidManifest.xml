@@ -45,7 +45,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".views.activity.apps.AppsActivity"
+            android:name=".views.activity.AppsActivity"
             android:exported="true"
             android:theme="@style/Theme.Xplex">
             <meta-data

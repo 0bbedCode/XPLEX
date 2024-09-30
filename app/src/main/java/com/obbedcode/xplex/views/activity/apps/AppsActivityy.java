@@ -5,7 +5,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -16,15 +15,13 @@ import com.google.android.material.behavior.HideBottomViewOnScrollBehavior;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.obbedcode.xplex.R;
 import com.obbedcode.xplex.views.activity.app.AppActivity;
-import com.obbedcode.xplex.views.activity.app.AppBarFragmentActivity;
+import com.obbedcode.xplex.views.etc.INavContainer;
 import com.obbedcode.xplex.views.fragment.apps.AppsPagerFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import rikka.material.app.MaterialActivity;
-
-public class AppsActivity extends AppActivity {
+public class AppsActivityy extends AppActivity implements INavContainer {
 
 
     //private OnBackPressListener currentFragmentController;
@@ -69,7 +66,7 @@ public class AppsActivity extends AppActivity {
         viewPager2.setUserInputEnabled(false);
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.bottom_item_1)
+            if (item.getItemId() == R.id.main_bottom_item_1)
                 viewPager2.setCurrentItem(0);
             return true;
         });
@@ -85,6 +82,7 @@ public class AppsActivity extends AppActivity {
                 updateCurrentFragmentController(position);
             }
         });
+        viewPager2.setCurrentItem(0, false);
 
         //viewPager2.setCurrentItem(PrefManager.INSTANCE.getDefaultPage(), false);
     }
@@ -104,18 +102,17 @@ public class AppsActivity extends AppActivity {
         theme.applyStyle(rikka.material.preference.R.style.ThemeOverlay_Rikka_Material3_Preference, true);
     }
 
-    //@Override
-    //public void showNavigation() {
-    //    if (hideBottomViewOnScrollBehavior.isScrolledDown())
-    //        hideBottomViewOnScrollBehavior.slideUp(bottomNavigationView);
-    //}
+    @Override
+    public void showNavigation() {
+        if (hideBottomViewOnScrollBehavior.isScrolledDown())
+            hideBottomViewOnScrollBehavior.slideUp(bottomNavigationView);
+    }
 
-    //@Override
-    //public void hideNavigation() {
-    //    if (hideBottomViewOnScrollBehavior.isScrolledUp())
-    //        hideBottomViewOnScrollBehavior.slideDown(bottomNavigationView);
-    //}
-
+    @Override
+    public void hideNavigation() {
+        if (hideBottomViewOnScrollBehavior.isScrolledUp())
+            hideBottomViewOnScrollBehavior.slideDown(bottomNavigationView);
+    }
 
     static class BottomFragmentStateAdapter extends FragmentStateAdapter {
 

@@ -2,6 +2,7 @@ package com.obbedcode.xplex.views.etc
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.widget.ViewFlipper
 import androidx.fragment.app.findFragment
 import androidx.lifecycle.lifecycleScope

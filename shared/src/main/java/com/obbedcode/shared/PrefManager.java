@@ -21,6 +21,25 @@ public class PrefManager {
 
     public static final String ORDER_APPLICATION_NAME = "Application Name";
 
+    public String id;
+    public String defaultOrder;
+
+    public static PrefManager create(String id, String defaultOrder) { return new PrefManager(id, defaultOrder); }
+    public PrefManager(String id, String defaultOrder) {
+        this.id = id;
+        this.defaultOrder = defaultOrder;
+    }
+
+    public void isEnabled(String key, boolean enabled) { pref.edit().putBoolean(id + "_is_" + key, enabled).apply(); }
+    public boolean isEnabled(String key) { return pref.getBoolean(id + "_is_"  + key, false); }
+
+    public void orderEx(String order) { pref.edit().putString(id + "_order", order).apply(); }
+    public String orderEx() { return pref.getString(id + "_order", defaultOrder); }
+
+    public void isReverseEx(boolean isDisabled) { pref.edit().putBoolean(id + "_isReverse", isDisabled).apply(); }
+    public boolean isReverseEx() { return pref.getBoolean(id + "_isReverse", false); }
+
+
     //public static String getDefaultPage() { return pref }
 
     public static boolean isConfigured() { return pref.getBoolean("isConfigured", false); }

@@ -6,6 +6,8 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.obbedcode.shared.logger.XLog;
+
 public class LinearItemDecoration extends RecyclerView.ItemDecoration {
     private final int space;
 

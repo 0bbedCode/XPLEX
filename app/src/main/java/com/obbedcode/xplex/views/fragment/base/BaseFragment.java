@@ -13,20 +13,13 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 public abstract class BaseFragment<VB extends ViewBinding> extends Fragment {
-
-    public VB binding;
-
-    protected VB getBinding() {
-        if (binding == null) {
+    public VB _binding;
+    protected VB get() {
+        if (_binding == null) {
             throw new IllegalStateException("Binding is only valid between onCreateView and onDestroyView.");
         }
-        return binding;
+        return _binding;
     }
-
-    //@Override
-    //public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-    //    super.onViewCreated(view, savedInstanceState);
-    //}
 
     @Nullable
     @Override
@@ -35,16 +28,16 @@ public abstract class BaseFragment<VB extends ViewBinding> extends Fragment {
         Class<?> aClass = (Class<?>) ((ParameterizedType) superclass).getActualTypeArguments()[0];
         try {
             Method method = aClass.getDeclaredMethod("inflate", LayoutInflater.class, ViewGroup.class, boolean.class);
-            binding = (VB) method.invoke(null, inflater, container, false);
+            _binding = (VB) method.invoke(null, inflater, container, false);
         } catch (Exception e) {
             throw new RuntimeException("Failed to inflate ViewBinding", e);
         }
-        return getBinding().getRoot();
+        return get().getRoot();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null;
+        _binding = null;
     }
 }

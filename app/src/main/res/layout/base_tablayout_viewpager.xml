@@ -38,6 +38,7 @@
                     android:focusable="true"
                     android:focusableInTouchMode="true"
                     android:gravity="center_vertical"
+                    android:visibility="gone"
                     android:orientation="horizontal">
 
                     <ImageView
@@ -79,9 +80,7 @@
                         android:visibility="gone" />
 
                 </LinearLayout>
-
             </com.google.android.material.card.MaterialCardView>
-
         </com.google.android.material.appbar.MaterialToolbar>
 
         <com.google.android.material.tabs.TabLayout
@@ -89,12 +88,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent" />
-
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:background="?attr/colorSurfaceVariant" />
-
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.viewpager2.widget.ViewPager2

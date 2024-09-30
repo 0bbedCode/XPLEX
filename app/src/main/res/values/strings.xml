@@ -15,7 +15,7 @@
     <string name="card_test_title">Core Tests</string>
     <string name="card_test_summary">Core tests to ensure Application is running at its best!</string>
 
-    <string name="card_welcome_title">Welcome to XPL-EX! v62</string>
+    <string name="card_welcome_title">Welcome to XPL-EX! v33</string>
     <string name="card_welcome_summary">Welcome:</string>
 
     <string name="text_test_root">Root Access</string>
@@ -46,7 +46,7 @@
 
     <string name="tab_user_apps">user</string>
     <string name="tab_configured_apps">configured</string>
-    <string name="tab_system_apps">system Apps</string>
+    <string name="tab_system_apps">system</string>
 
     <string name="filter_reverse">Reverse</string>
 

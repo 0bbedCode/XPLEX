@@ -92,7 +92,7 @@ public class ServiceClient extends IXPService.Stub implements IBinder.DeathRecip
     }
 
     @Override
-    public List<XApp> getInstalledAppsEx() throws RemoteException { return service.getInstalledAppsEx(); }
+    public ParceledListSlice<XApp> getInstalledAppsEx() throws RemoteException { return service.getInstalledAppsEx(); }
 
     @Override
     public List<XSetting> getAppHookSettings(int userId, String category) throws RemoteException { return service.getAppHookSettings(userId, category); }

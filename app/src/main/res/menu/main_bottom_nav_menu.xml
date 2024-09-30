@@ -1,6 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/bottom_item_1"
+        android:id="@+id/main_bottom_item_1"
         android:enabled="true"
         android:icon="@drawable/ic_remix_eye_line"
         android:title="@string/nav_apps" />
