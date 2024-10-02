@@ -34,11 +34,17 @@ public class ActivityBase extends AppActivity implements INavContainer {
     protected boolean showBottomNavBar = true;
     protected int defaultIndex = 0;
 
+    protected Bundle args = null;
+    protected void setArgs(Bundle args) {
+        this.args = args;
+    }
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Now lets build more
-        setContentView(R.layout.base_activity_two);
+        //setContentView(R.layout.base_activity_two);
         init();
     }
 
@@ -54,6 +60,9 @@ public class ActivityBase extends AppActivity implements INavContainer {
         for(Class<?> t : fragments) {
             try {
                 Fragment f = (Fragment)t.newInstance();
+                if(args != null)
+                    f.setArguments(args);
+
                 bottomNavFragments.add(f);
             }catch (Throwable e) {
                 XLog.e(TAG_BASE, "Failed to Create Instance of Fragment: " + e);

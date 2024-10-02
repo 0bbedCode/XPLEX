@@ -98,7 +98,7 @@ public class XplexService extends IXPService.Stub {
     }
 
     @Override
-    public double getOverallMemoryUsage() throws RemoteException { return UsageUtils.calculateMemoryUsage(MemoryApi.getMemoryInfoFromService()); }
+    public double getOverallMemoryUsage() throws RemoteException { return UsageUtils.calculateMemoryUsage(MemoryApi.getMemoryInfoFromProc()); }
 
     @Override
     public ParceledListSlice<XApp> getInstalledAppsEx() throws RemoteException {

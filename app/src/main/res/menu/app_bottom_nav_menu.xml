@@ -2,6 +2,6 @@
     <item
         android:id="@+id/app_bottom_item_1"
         android:enabled="true"
-        android:icon="@drawable/ic_remix_eye_line"
-        android:title="@string/nav_apps" />
+        android:icon="@drawable/hook_svgrepo_com__1_"
+        android:title="@string/nav_app_hooks" />
 </menu>

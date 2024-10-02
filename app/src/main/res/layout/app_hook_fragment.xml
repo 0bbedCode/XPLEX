@@ -21,10 +21,13 @@
                 android:scrollbars="none" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
     </com.obbedcode.xplex.views.etc.CustomViewFlipper>
+
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center" />
+
 </FrameLayout>

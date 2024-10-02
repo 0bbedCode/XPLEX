@@ -2,6 +2,7 @@ package com.obbedcode.shared.xplex.data;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -15,12 +16,14 @@ import com.obbedcode.shared.db.SQLSnake;
 import com.obbedcode.shared.db.SnakeAction;
 import com.obbedcode.shared.helpers.ContentValueBuilder;
 import com.obbedcode.shared.helpers.StrBuilder;
+import com.obbedcode.shared.io.BundleBuilder;
+import com.obbedcode.shared.io.IBundler;
 import com.obbedcode.shared.utils.CursorUtils;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class XSetting extends XIdentity implements IDatabaseSerial, Parcelable {
+public class XSetting extends XIdentity implements IDatabaseSerial, Parcelable, IBundler {
     public String name;
     public String value;
 
@@ -131,6 +134,22 @@ public class XSetting extends XIdentity implements IDatabaseSerial, Parcelable {
         @Override
         public XSetting[] newArray(int size) { return new XSetting[size]; }
     };
+
+    @Override
+    public Bundle toBundle() {
+        return BundleBuilder.create()
+                .write(XIdentity.BUNDLE_KEY, super.toBundle())
+                .write(Table.FIELD_NAME, this.name)
+                .write(Table.FIELD_VALUE, this.value)
+                .build();
+    }
+
+    @Override
+    public void fromBundle(Bundle bundle) {
+        super.fromBundle(bundle);
+        this.name = bundle.getString(Table.FIELD_NAME);
+        this.value = bundle.getString(Table.FIELD_VALUE);
+    }
 
     public static class Table {
         public static final String NAME = "settings";

@@ -39,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
     Did somebody say IPC Transaction too big error code 3 ? No problem Let me Handle it!
     Ps ".query" and "onTransact" Max Sizes are "1mb or 1 * 1024 * 1024" around some its "64 * 1024"
     Don't even get me started with ".call"
-    Inspiration and Help:https://medium.com/@jiang7748533/how-aidl-slices-and-transfers-large-lists-of-parcelable-data-a0e4126e44e6
+    Super Safe, No Malformations, Get Data exceeding 1mb over IPC via Slicing
  */
 public class ParceledListSlice<T extends Parcelable> implements Parcelable {
     private static final String TAG = "ObbedCode.XP.ParceledListSlice";
@@ -64,7 +64,6 @@ public class ParceledListSlice<T extends Parcelable> implements Parcelable {
     private ParceledListSlice(Parcel p, ClassLoader loader) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
             MAX_IPC_SIZE = IBinder.getSuggestedMaxIpcSizeBytes();
-
 
         if (DEBUG) Log.d(TAG, "MAX_IPC_SIZE set to: " + MAX_IPC_SIZE);
         final int N = p.readInt();

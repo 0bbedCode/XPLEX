@@ -65,7 +65,7 @@ public class HomeStatsViewHolder extends BaseViewHolder<Object> {
                         ThreadUtils.sleep(1500);
                         IXPService serv = ServiceClient.waitForService();
                         if(serv != null) {
-                            Log.d(TAG, "Some Log should be null: " + serv.getLog());
+                            //Log.d(TAG, "Some Log should be null: " + serv.getLog());
                             int ramUsage = (int)Math.round(serv.getOverallMemoryUsage());
                             int cpuUsage = (int)Math.round(serv.getOverallCpuUsage());
 
@@ -89,6 +89,5 @@ public class HomeStatsViewHolder extends BaseViewHolder<Object> {
                 }
             }
         });
-
     }
 }

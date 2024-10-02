@@ -21,6 +21,7 @@ import com.obbedcode.xplex.R;
 import com.obbedcode.xplex.databinding.AppItemBinding;
 import com.bumptech.glide.request.RequestOptions;
 
+
 public class AppsAdapter extends ListAdapter<XApp, AppsAdapter.AppViewHolder> {
     private final RequestOptions requestOptions;
     private final OnItemClickListener onItemClickListener;

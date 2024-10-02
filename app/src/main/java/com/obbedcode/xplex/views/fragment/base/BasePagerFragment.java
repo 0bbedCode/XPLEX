@@ -67,7 +67,7 @@ public abstract class BasePagerFragment extends BaseFragment<BaseTablayoutViewpa
     protected abstract void search(String text);
     protected abstract Fragment getFragment(int position);
     protected abstract List<Integer> getTabList();
-
+    public abstract void setHint(int count);
 
     protected PrefManager refManager;
 

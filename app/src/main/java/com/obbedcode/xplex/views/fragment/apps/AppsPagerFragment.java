@@ -51,6 +51,8 @@ public class AppsPagerFragment extends BasePagerFragment {
         super.sortByTitles = Arrays.asList(UiGlobals.SORT_APP_SIZE, UiGlobals.FILTER_LAST_UPDATE, UiGlobals.SORT_INSTALL_DATE, UiGlobals.SORT_TARGET_SDK);
         super.filterTitles = Arrays.asList(UiGlobals.FILTER_CONFIGURED, UiGlobals.FILTER_LAST_UPDATE, UiGlobals.FILTER_DISABLED);
 
+
+
         super.initEditText();
         super.initSearchButtons();
         //initFilterSheet();

@@ -11,7 +11,6 @@ import androidx.lifecycle.Transformations;
 
 import com.obbedcode.shared.PrefManager;
 import com.obbedcode.shared.Str;
-import com.obbedcode.shared.UiGlobals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +29,12 @@ public abstract class BaseViewModel<T>  extends AndroidViewModel {
     protected final Executor backgroundExecutor = Executors.newSingleThreadExecutor();
 
     public void setType(String type) { this.type = type; }
-    public LiveData<List<T>> getAppsLiveData() { return this.liveData; }
+    public LiveData<List<T>> getRawLiveData() { return this.liveData; }
 
     public BaseViewModel(Application application, String type) {
         super(application);
         this.updateParams = new MutableLiveData<>(new Triple<>(new Pair<>(Str.EMPTY, new ArrayList<>()), new Pair<>(Str.EMPTY, false), 0L));
-        this.liveData = setupAppsLiveData(application);
+        this.liveData = setupLiveData(application);
         this.type = type;
         refresh();
     }
@@ -64,7 +63,7 @@ public abstract class BaseViewModel<T>  extends AndroidViewModel {
         return new ArrayList<>();
     }
 
-    private LiveData<List<T>> setupAppsLiveData(final Application application) {
+    private LiveData<List<T>> setupLiveData(final Application application) {
         return Transformations.switchMap(updateParams, input -> Transformations.map(
                 Transformations.distinctUntilChanged(
                         Transformations.switchMap(updateParams, params -> {

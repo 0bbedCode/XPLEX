@@ -2,6 +2,7 @@ package com.obbedcode.shared.xplex.data;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.os.Parcel;
 
 import androidx.annotation.NonNull;
@@ -13,18 +14,22 @@ import com.obbedcode.shared.db.IDatabaseSerial;
 import com.obbedcode.shared.db.SQLSnake;
 import com.obbedcode.shared.db.SnakeAction;
 import com.obbedcode.shared.helpers.StrBuilder;
+import com.obbedcode.shared.io.BundleBuilder;
+import com.obbedcode.shared.io.IBundler;
 import com.obbedcode.shared.utils.CursorUtils;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class XIdentity implements IDatabaseSerial {
+public class XIdentity implements IDatabaseSerial, IBundler {
     public static final int GLOBAL_USER = 0;
     public static final String GLOBAL_NAMESPACE = "global";
 
     public static final String FIELD_USER = "user";
     public static final String FIELD_CATEGORY = "category";
+
+    public static final String BUNDLE_KEY = "identity";
 
     public static final XIdentity GLOBAL_IDENTITY = new XIdentity(GLOBAL_USER, GLOBAL_NAMESPACE);
 
@@ -125,5 +130,27 @@ public class XIdentity implements IDatabaseSerial {
                 .appendFieldLine(FIELD_USER, this.user)
                 .appendFieldLine(FIELD_CATEGORY, this.category)
                 .toString();
+    }
+
+    @Override
+    public Bundle toBundle() {
+        ///Make sure not null ?????
+        return BundleBuilder.create()
+                .write(FIELD_USER, user)
+                .write(FIELD_CATEGORY, category)
+                .build();
+    }
+
+    @Override
+    public void fromBundle(Bundle bundle) {
+        if(bundle.containsKey(BUNDLE_KEY)) {
+            Bundle b = bundle.getBundle(BUNDLE_KEY);
+            if(b == null) return;
+            user = b.getInt(FIELD_USER);
+            category = b.getString(FIELD_CATEGORY);
+        } else {
+            user = bundle.getInt(FIELD_USER);
+            category = bundle.getString(FIELD_CATEGORY);
+        }
     }
 }

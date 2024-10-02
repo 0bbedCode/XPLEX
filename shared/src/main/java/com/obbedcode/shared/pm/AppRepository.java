@@ -53,14 +53,12 @@ public class AppRepository {
             Pair<String, List<String>> filter,
             String keyword,
             boolean isReverse) {
-        if(apps.isEmpty()) return apps;
+        if(apps == null || apps.isEmpty()) return new ArrayList<>();
         Comparator<XApp> comparator = getComparator(filter.getFirst(), isReverse);
         List<XApp> filteredApps = new ArrayList<>();
-        for (XApp app : apps) {
-            if (isAppMatchingCriteria(app, keyword, filter.getSecond())) {
+        for (XApp app : apps)
+            if (isAppMatchingCriteria(app, keyword, filter.getSecond()))
                 filteredApps.add(app);
-            }
-        }
 
         Collections.sort(filteredApps, comparator);
         return filteredApps;
