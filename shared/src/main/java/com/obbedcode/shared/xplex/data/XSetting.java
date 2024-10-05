@@ -16,7 +16,7 @@ import com.obbedcode.shared.db.SQLSnake;
 import com.obbedcode.shared.db.SnakeAction;
 import com.obbedcode.shared.helpers.ContentValueBuilder;
 import com.obbedcode.shared.helpers.StrBuilder;
-import com.obbedcode.shared.io.BundleBuilder;
+import com.obbedcode.shared.io.builders.BundleBuilder;
 import com.obbedcode.shared.io.IBundler;
 import com.obbedcode.shared.utils.CursorUtils;
 
@@ -43,32 +43,6 @@ public class XSetting extends XIdentity implements IDatabaseSerial, Parcelable, 
     }
 
     @Override
-    public int describeContents() { return 0; }
-
-    @Override
-    public void writeToParcel(@NonNull Parcel dest, int flags) {
-        super.identityWriteToParcel(dest, flags);
-        dest.writeString(name);
-        dest.writeString(value);
-    }
-
-    @Override
-    public List<ContentValues> toContentValuesList() { return null; }
-
-    @Override
-    public void fromContentValuesList(List<ContentValues> contentValues) { }
-
-    @Override
-    public ContentValues toContentValues() {
-        //Be careful for null values, its one thing to "update" a db entry without a column and another when you push it with a NULL value column!!!!
-        return ContentValueBuilder.create()
-                .put(super.toContentValues())
-                .put(Table.FIELD_NAME, this.name)
-                .put(Table.FIELD_VALUE, this.value)
-                .build();
-    }
-
-    @Override
     public void writeQuery(SQLSnake snake, SnakeAction wantedAction) {
         if(snake != null) {
             switch (wantedAction) {
@@ -79,6 +53,23 @@ public class XSetting extends XIdentity implements IDatabaseSerial, Parcelable, 
                     break;
             }
         }
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        super.identityWriteToParcel(dest, flags);
+        dest.writeString(name);
+        dest.writeString(value);
+    }
+
+    @Override
+    public ContentValues toContentValues() {
+        //Be careful for null values, its one thing to "update" a db entry without a column and another when you push it with a NULL value column!!!!
+        return ContentValueBuilder.create()
+                .put(super.toContentValues())
+                .put(Table.FIELD_NAME, this.name)
+                .put(Table.FIELD_VALUE, this.value)
+                .build();
     }
 
     @Override
@@ -98,6 +89,9 @@ public class XSetting extends XIdentity implements IDatabaseSerial, Parcelable, 
             this.value = contentValues.getAsString(Table.FIELD_VALUE);
         }
     }
+
+    @Override
+    public int describeContents() { return 0; }
 
     @Override
     public void copy(ICopyable from) {

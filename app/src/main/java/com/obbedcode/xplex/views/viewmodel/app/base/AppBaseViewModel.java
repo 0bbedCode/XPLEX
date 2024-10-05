@@ -2,10 +2,9 @@ package com.obbedcode.xplex.views.viewmodel.app.base;
 
 import android.app.Application;
 
-import com.obbedcode.shared.logger.XLog;
 import com.obbedcode.shared.repositories.interfaces.IRepository;
 import com.obbedcode.shared.repositories.interfaces.IRepositoryContainer;
-import com.obbedcode.shared.xplex.data.XHookApp;
+import com.obbedcode.shared.xplex.data.hook.XHookApp;
 import com.obbedcode.shared.xplex.data.XUser;
 import com.obbedcode.shared.xplex.interfaces.IXHookAppContainer;
 import com.obbedcode.shared.xplex.interfaces.IXUserContainer;

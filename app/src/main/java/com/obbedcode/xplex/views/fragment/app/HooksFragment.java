@@ -8,9 +8,8 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.obbedcode.shared.logger.XLog;
-import com.obbedcode.shared.xplex.data.XHookApp;
-import com.obbedcode.shared.xplex.data.XHookGroup;
+import com.obbedcode.shared.xplex.data.hook.XHookApp;
+import com.obbedcode.shared.xplex.data.hook.XHookGroup;
 import com.obbedcode.shared.xplex.data.XUser;
 import com.obbedcode.xplex.databinding.AppHookFragmentBinding;
 import com.obbedcode.xplex.views.adapter.app.HookGroupAdapter;

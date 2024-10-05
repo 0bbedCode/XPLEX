@@ -14,7 +14,7 @@ import com.obbedcode.shared.db.IDatabaseSerial;
 import com.obbedcode.shared.db.SQLSnake;
 import com.obbedcode.shared.db.SnakeAction;
 import com.obbedcode.shared.helpers.StrBuilder;
-import com.obbedcode.shared.io.BundleBuilder;
+import com.obbedcode.shared.io.builders.BundleBuilder;
 import com.obbedcode.shared.io.IBundler;
 import com.obbedcode.shared.utils.CursorUtils;
 

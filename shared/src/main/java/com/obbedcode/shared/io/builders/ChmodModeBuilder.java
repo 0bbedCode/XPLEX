@@ -1,4 +1,6 @@
-package com.obbedcode.shared.io;
+package com.obbedcode.shared.io.builders;
+
+import com.obbedcode.shared.io.ModePermission;
 
 public class ChmodModeBuilder {
     public static ChmodModeBuilder create() { return new ChmodModeBuilder(); }

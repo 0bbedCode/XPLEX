@@ -1,9 +1,5 @@
 package com.obbedcode.shared.repositories.interfaces;
 
-import android.app.Application;
-
-import com.obbedcode.shared.xplex.data.XHookGroup;
-
 import java.util.List;
 
 import kotlin.Pair;

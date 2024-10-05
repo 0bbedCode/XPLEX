@@ -2,7 +2,7 @@ package com.obbedcode.shared.xplex.data;
 
 import android.os.Bundle;
 
-import com.obbedcode.shared.io.BundleBuilder;
+import com.obbedcode.shared.io.builders.BundleBuilder;
 import com.obbedcode.shared.io.IBundler;
 
 public class XLogLog implements IBundler {

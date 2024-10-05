@@ -16,6 +16,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +52,14 @@ public class ParceledListSlice<T extends Parcelable> implements Parcelable {
     private final List<T> mList;
     private int mInlineCountLimit = Integer.MAX_VALUE;
     private static final Map<String, Creator<?>> sCreatorCache = new ConcurrentHashMap<>();
+
+    public ParceledListSlice(Collection<T> collection) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+            MAX_IPC_SIZE = IBinder.getSuggestedMaxIpcSizeBytes();
+
+        if (DEBUG) Log.d(TAG, "MAX_IPC_SIZE set to: " + MAX_IPC_SIZE);
+        mList = new ArrayList<>(collection);
+    }
 
     public ParceledListSlice(List<T> list) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)

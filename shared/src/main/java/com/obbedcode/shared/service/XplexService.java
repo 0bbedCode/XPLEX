@@ -12,9 +12,11 @@ import com.obbedcode.shared.usage.ProcessApi;
 import com.obbedcode.shared.usage.RunningProcess;
 import com.obbedcode.shared.usage.UsageUtils;
 import com.obbedcode.shared.utils.PkgUtils;
+import com.obbedcode.shared.xplex.data.XAssignment;
 import com.obbedcode.shared.xplex.data.XSetting;
 import com.obbedcode.shared.xplex.data.XStartupSetting;
 import com.obbedcode.shared.xplex.database.XDatabaseManager;
+import com.obbedcode.shared.xplex.database.XPrivacyControl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,6 +118,11 @@ public class XplexService extends IXPService.Stub {
 
         return new ParceledListSlice<>(apps);
 
+    }
+
+    @Override
+    public ParceledListSlice<XAssignment> getAppAssignments(int userId, String category) {
+        return new ParceledListSlice<>(XPrivacyControl.getAssignments(userId, category));
     }
 
     @Override

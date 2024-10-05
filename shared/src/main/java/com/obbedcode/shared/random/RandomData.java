@@ -1,4 +1,4 @@
-package com.obbedcode.shared.random.tools;
+package com.obbedcode.shared.random;
 
 import com.obbedcode.shared.Str;
 

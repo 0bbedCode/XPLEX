@@ -2,11 +2,7 @@ package com.obbedcode.xplex.views.viewmodel;
 
 import android.app.Application;
 
-import androidx.lifecycle.AndroidViewModel;
-
-import com.obbedcode.shared.xplex.data.XHookGroup;
-
-import java.util.List;
+import com.obbedcode.shared.xplex.data.hook.XHookGroup;
 
 public class AppViewModel extends BaseViewModel<XHookGroup>  {
 

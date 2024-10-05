@@ -1,11 +1,7 @@
 package com.obbedcode.shared.hook;
 
-import android.annotation.SuppressLint;
-import android.content.pm.IPackageManager;
-
 import com.obbedcode.shared.IXPService;
-import com.obbedcode.shared.logger.XLog;
-import com.obbedcode.shared.random.tools.RandomData;
+import com.obbedcode.shared.random.RandomData;
 import com.obbedcode.shared.service.ServiceClient;
 import com.obbedcode.shared.xplex.data.XIdentity;
 import com.obbedcode.shared.xplex.data.XSetting;

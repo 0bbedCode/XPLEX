@@ -10,8 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.obbedcode.shared.PrefManager;
-import com.obbedcode.shared.logger.XLog;
-import com.obbedcode.shared.xplex.data.XHookApp;
+import com.obbedcode.shared.xplex.data.hook.XHookApp;
 import com.obbedcode.xplex.R;
 import com.obbedcode.xplex.databinding.BaseTablayoutViewpagerBinding;
 import com.obbedcode.xplex.views.fragment.app.HooksFragment;

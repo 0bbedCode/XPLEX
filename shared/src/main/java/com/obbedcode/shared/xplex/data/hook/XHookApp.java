@@ -1,12 +1,13 @@
-package com.obbedcode.shared.xplex.data;
+package com.obbedcode.shared.xplex.data.hook;
 
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
 import com.obbedcode.shared.helpers.StrBuilder;
-import com.obbedcode.shared.io.BundleBuilder;
+import com.obbedcode.shared.io.builders.BundleBuilder;
 import com.obbedcode.shared.io.IBundler;
+import com.obbedcode.shared.xplex.data.XIdentity;
 
 public class XHookApp implements IBundler {
     public int uid;

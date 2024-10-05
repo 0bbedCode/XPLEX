@@ -6,6 +6,7 @@ import com.obbedcode.shared.data.XApp;
 import com.obbedcode.shared.data.XApp;
 
 import com.obbedcode.shared.xplex.data.XSetting;
+import com.obbedcode.shared.xplex.data.XAssignment;
 
 import com.obbedcode.shared.usage.RunningProcess;
 import com.obbedcode.shared.service.ParceledListSlice;
@@ -21,6 +22,7 @@ interface IXPService {
     String getLog();
 
     ParceledListSlice<XApp> getInstalledAppsEx();
+    ParceledListSlice<XAssignment> getAppAssignments(int userId, String category);
 
     double getOverallCpuUsage();
     double getOverallMemoryUsage();

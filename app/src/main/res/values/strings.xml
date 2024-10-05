@@ -15,7 +15,7 @@
     <string name="card_test_title">Core Tests</string>
     <string name="card_test_summary">Core tests to ensure Application is running at its best!</string>
 
-    <string name="card_welcome_title">Welcome to XPL-EX! v55</string>
+    <string name="card_welcome_title">Welcome to XPL-EX! v33</string>
     <string name="card_welcome_summary">Welcome:</string>
 
     <string name="text_test_root">Root Access</string>

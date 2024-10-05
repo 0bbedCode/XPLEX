@@ -6,6 +6,7 @@ import com.obbedcode.shared.db.IDatabaseManage;
 import com.obbedcode.shared.db.SQLDatabase;
 import com.obbedcode.shared.db.SQLSnake;
 import com.obbedcode.shared.logger.XLog;
+import com.obbedcode.shared.xplex.data.XAssignment;
 import com.obbedcode.shared.xplex.data.XSetting;
 import com.obbedcode.shared.xplex.data.XStartupSetting;
 
@@ -102,6 +103,31 @@ public class XDatabaseManager implements IDatabaseManage {
                     .queryAs(XStartupSetting.class, true);
         }
     }
+
+    public Collection<XAssignment> getAssignments(Integer userId, String packageName) {
+        synchronized (mLockMain) {
+            if(!canQueryTable(XAssignment.Table.NAME, XAssignment.Table.COLUMNS)) return new ArrayList<>();
+            return SQLSnake
+                    .create(mDatabase, XAssignment.Table.NAME)
+                    .pushColumnValueIfNull(false)
+                    .whereIdentity(userId, packageName)
+                    .asSnake()
+                    .queryAs(XAssignment.class, true);
+        }
+    }
+
+    public boolean putAssignment(Integer userId, String packageName, String hook, XAssignment.Kind extra, boolean deleteAssignment) { return putAssignment(XAssignment.create(userId, packageName, hook, extra), deleteAssignment);  }
+    public boolean putAssignment(XAssignment assignment, boolean deleteAssignment) {
+        synchronized (mLockMain) {
+            if(!canQueryTable(XAssignment.Table.NAME, XAssignment.Table.COLUMNS)) return false;
+            return SQLSnake
+                    .create(mDatabase, XAssignment.Table.NAME)
+                    .setActionToDeleteElseInsert(deleteAssignment)
+                    .pinObject(assignment, deleteAssignment, deleteAssignment)
+                    .executeAction();
+        }
+    }
+
 
     @Override
     public boolean ensureReady(Context context) {

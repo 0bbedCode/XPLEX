@@ -21,6 +21,21 @@ public class Str {
 
     public static boolean safeEqualsIgnoreCase(String a, String b) { return a == null ? b == null : a.equalsIgnoreCase(b); }
 
+
+    public static String cleanAsOnlyAlphabetString(String s) {
+        if(s == null || s.isEmpty()) return s;
+
+        StringBuilder sb = new StringBuilder();
+        char[] chrs = s.toCharArray();
+        for(char c : chrs) {
+            if(Character.isAlphabetic(c)) {
+                sb.append(c);
+            }
+        }
+
+        return sb.toString();
+    }
+
     public static String concat(Object a, Object b) {
         return StrBuilder.create()
                 .appendLine(a == null ? "null(a)" : a.toString())

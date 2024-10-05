@@ -1,4 +1,4 @@
-package com.obbedcode.shared.xplex.data;
+package com.obbedcode.shared.xplex.data.hook;
 
 public class XHookGroup {
     //Icon....

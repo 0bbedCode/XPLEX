@@ -23,6 +23,14 @@ public class CursorUtils {
         return c.getInt(cIx);
     }
 
+    public static Long readLong(Cursor c, String key) { return readLong(c, key, null); }
+    public static Long readLong(Cursor c, String key, Long defaultValue) {
+        if(c == null || key == null) return defaultValue;
+        int cIx = c.getColumnIndex(key);
+        if(cIx == -1) return defaultValue;
+        return c.getLong(cIx);
+    }
+
     public static String readString(Cursor c, String key) { return readString(c, key, null); }
     public static String readString(Cursor c, String key, String defaultValue) {
         if(c == null || key == null) return  defaultValue;

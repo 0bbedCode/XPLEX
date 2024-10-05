@@ -7,7 +7,9 @@ import com.obbedcode.shared.xplex.data.XSetting;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import kotlin.Pair;
 
@@ -29,6 +31,16 @@ public class SettingRepository implements IRepository<XSetting> {
         return getFilteredAndSortedSettings(items, filter, keyword, isReverse);
     }
 
+
+    public static Map<String, String> getSettings(int userId, String packageName) {
+        List<XSetting> settings = getSettingsForApp(userId, packageName);
+        Map<String, String> map = new HashMap<>();
+        for(XSetting set : settings) {
+            map.put(set.name, set.value);
+        }
+
+        return map;
+    }
 
     public static List<XSetting> getSettingsForApp(int userId, String packageName) {
         return new ArrayList<>();

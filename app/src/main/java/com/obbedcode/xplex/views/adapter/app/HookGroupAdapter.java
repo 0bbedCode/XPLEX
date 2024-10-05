@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.obbedcode.shared.xplex.data.XHookGroup;
+import com.obbedcode.shared.xplex.data.hook.XHookGroup;
 import com.obbedcode.xplex.databinding.AppHookItemBinding;
 import com.obbedcode.xplex.views.etc.UiUtil;
 

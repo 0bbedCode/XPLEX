@@ -9,7 +9,9 @@ import com.obbedcode.shared.data.XApp;
 import com.obbedcode.shared.logger.XLog;
 import com.obbedcode.shared.usage.RunningProcess;
 import com.obbedcode.shared.utils.ThreadUtils;
+import com.obbedcode.shared.xplex.data.XAssignment;
 import com.obbedcode.shared.xplex.data.XSetting;
+import com.obbedcode.shared.xplex.database.XPrivacyControl;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -19,7 +21,8 @@ import java.util.List;
 //
 //This is for the Client, will contact actual XplexService (ServiceClient.getLogs() => HMAService.getLogs())
 //
-public class ServiceClient extends IXPService.Stub implements IBinder.DeathRecipient {
+public class
+ServiceClient extends IXPService.Stub implements IBinder.DeathRecipient {
     private static final String TAG = "ObbedCode.XP.ServiceClient";
     private static IXPService service;
 
@@ -93,6 +96,12 @@ public class ServiceClient extends IXPService.Stub implements IBinder.DeathRecip
 
     @Override
     public ParceledListSlice<XApp> getInstalledAppsEx() throws RemoteException { return service.getInstalledAppsEx(); }
+
+    @Override
+    public ParceledListSlice<XAssignment> getAppAssignments(int userId, String category) throws RemoteException {
+        return service.getAppAssignments(userId, category);
+    }
+
 
     @Override
     public List<XSetting> getAppHookSettings(int userId, String category) throws RemoteException { return service.getAppHookSettings(userId, category); }

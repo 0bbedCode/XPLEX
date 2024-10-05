@@ -1,17 +1,14 @@
 package com.obbedcode.shared.io;
 
-import android.os.Debug;
 import android.os.ParcelFileDescriptor;
 import android.os.Process;
 import android.system.Os;
 import android.system.OsConstants;
 import android.system.StructStat;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.obbedcode.shared.BuildConfig;
 import com.obbedcode.shared.Str;
+import com.obbedcode.shared.io.builders.ChmodModeBuilder;
 import com.obbedcode.shared.logger.XLog;
 import com.obbedcode.shared.utils.StreamUtils;
 
@@ -20,7 +17,6 @@ import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
