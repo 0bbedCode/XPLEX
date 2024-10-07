@@ -6,38 +6,90 @@ import com.obbedcode.shared.repositories.filters.PropertiesFilterFactory;
 import com.obbedcode.shared.repositories.filters.ShellFilterFactory;
 import com.obbedcode.shared.repositories.hooks.privacy.tracking.MacAddressHooks;
 import com.obbedcode.shared.repositories.interfaces.IFilterFactory;
+import com.obbedcode.shared.repositories.interfaces.IRepository;
 import com.obbedcode.shared.service.ServiceClient;
-import com.obbedcode.shared.service.XplexService;
 import com.obbedcode.shared.xplex.XAppCache;
 import com.obbedcode.shared.xplex.data.XAssignment;
-import com.obbedcode.shared.xplex.data.hook.XHookDef;
+import com.obbedcode.shared.xplex.data.hook.XHookDefinition;
+import com.obbedcode.shared.xplex.data.hook.XHookContainer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class HookRepository {
+import kotlin.Pair;
+
+//Make these all UI ?
+public class HookRepository implements IRepository<XHookContainer> {
+    public static final HookRepository INSTANCE = new HookRepository();
+
     private static final String TAG = "ObbedCode.XP.HookRepository";
 
     private static final Object mLock = new Object();
-    private static Map<String, XHookDef> mHooksCache = new HashMap<>();
+    private static Map<String, XHookDefinition> mHooksCache = new HashMap<>();
 
 
     public static IXPService getService() {
         return ServiceClient.getService();
     }
 
-    public static Map<String, XHookDef> parseList(List<XHookDef> defs) {
-        Map<String, XHookDef> defMap = new HashMap<>();
-        for(XHookDef d : defs) {
-            defMap.put(d.getHookId(), d);
+
+    @Override
+    public List<XHookContainer> get() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<XHookContainer> get(int userId, String packageName, String type) {
+        List<XAssignment> assignments = getAssignments(userId, packageName, false);
+        Map<String, XHookDefinition> definitions = getHookDefinitions();
+
+        Map<String, XHookContainer> containers = new HashMap<>();
+
+        for(XHookDefinition definition : definitions.values()) {
+            if(definition.group.equalsIgnoreCase(type)) {
+                XHookContainer container = containers.get(definition.container);
+                if(container == null) {
+                    container = new XHookContainer();
+                    container.name = definition.container;
+                    container.description = "Some Description";
+                    container.hookIds.add(definition.hookId);
+                    //Init settings shit
+                    //For now if ONE is enabled its considered enabled
+                    for(XAssignment ass : assignments) {
+                        if(ass.hook.equalsIgnoreCase(definition.hookId)) {
+                            container.isEnabled = true;
+                            //Get Settings
+                            break;
+                        }
+                    }
+                    containers.put(definition.container, container);
+                } else {
+                    container.hookIds.add(definition.hookId);
+                }
+            }
         }
+
+
+        return new ArrayList<>(containers.values());
+    }
+
+    @Override
+    public List<XHookContainer> getFilteredAndSorted(List<XHookContainer> items, Pair<String, List<String>> filter, String keyword, boolean isReverse) {
+        return items;
+    }
+
+    public static Map<String, XHookDefinition> parseList(List<XHookDefinition> definitions) {
+        Map<String, XHookDefinition> defMap = new HashMap<>();
+        for(XHookDefinition d : definitions)
+            defMap.put(d.getHookId(), d);
 
         return defMap;
     }
 
-    public static Map<String, XHookDef> getHookDefinitions() {
+    public static Map<String, XHookDefinition> getHookDefinitions() {
         synchronized (mLock) {
             if(mHooksCache.isEmpty()) {
                 mHooksCache.putAll(parseList(MacAddressHooks.MAC_HOOKS));
@@ -65,9 +117,9 @@ public class HookRepository {
         try {
             assignments = serv.getAppAssignments(userId, packageName).getList();
             if(resolveHook) {
-                Map<String, XHookDef> definitions = getHookDefinitions();
+                Map<String, XHookDefinition> definitions = getHookDefinitions();
                 for(XAssignment ass : assignments) {
-                    XHookDef def = definitions.get(ass.hook);
+                    XHookDefinition def = definitions.get(ass.hook);
                     if(def != null) {
                         ass.definition = def;
                     }

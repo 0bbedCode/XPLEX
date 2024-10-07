@@ -1,18 +1,18 @@
 package com.obbedcode.shared.xplex.data.hook;
 
+import android.content.Context;
 import android.text.TextUtils;
 
 import com.obbedcode.shared.Str;
+import com.obbedcode.shared.reflect.TypeResolver;
 import com.obbedcode.shared.xplex.XParam;
 
-import java.lang.reflect.Member;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 import kotlin.NotImplementedError;
 
-public class XHookDef {
+public class XHookDefinition {
     public String method;
     public String className;
     public String returnType;
@@ -34,6 +34,18 @@ public class XHookDef {
     public boolean afterHook = false;
 
     public String hookId;
+
+    public TypeResolver.ResolvedHook resolvedHook(Context context) {
+        return TypeResolver.resolveHook(this, context);
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public String getResolvedClassName() {
+        return className;
+    }
 
     public String getHookId() {
         if(hookId == null) {
@@ -80,8 +92,10 @@ public class XHookDef {
     public String getSetting(XParam param) { return param.getSetting(settings[0]); }
     public String getSetting(XParam param, int settingIndex) { return param.getSetting(settings[settingIndex]); }
 
-    public Member resolveMember() {
-        return null;
+    public void setHookId(String hookId) {
+        if(hookId != null) {
+            this.hookId = hookId;
+        }
     }
 
     public void setHeader(String author, String collection, String group, String container, String description) {

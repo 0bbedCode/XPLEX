@@ -20,7 +20,7 @@ public class LogRepository implements IRepository<XLogLog> {
     }
 
     @Override
-    public List<XLogLog> get(int userId, String packageName) {
+    public List<XLogLog> get(int userId, String packageName, String type) {
         return getLogsForApp(userId, packageName, XLogLog.Code.UNKNOWN);
     }
 

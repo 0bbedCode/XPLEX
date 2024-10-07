@@ -41,58 +41,5 @@ public class HookDeploy {
     }
 
     public void hookPackage(final XC_LoadPackage.LoadPackageParam lpparam) {
-        if(service != null) {
-            for (HookDef def : definitions) {
-                if(!def.isDisabled(lpparam.packageName)) {
-                    if(!def.isField()) {
-                        try {
-
-                            //Init all shit here
-                            List<XSetting> settings = service.getAppHookSettings(lpparam.appInfo.uid, lpparam.packageName);
-                            List<XSetting> globalSettings = service.getAppHookSettings(XIdentity.GLOBAL_USER, XIdentity.GLOBAL_NAMESPACE);
-
-                            //Maybe have a interface handle intercepting
-                            //Files, Props etc ???
-                            //Inline it in the Def
-
-                            //unless it has the Prop Interceptor explicit then dont add all properties or something ??
-                            //Not sure
-
-                            Class<?> clazz = Class.forName(def.className, false, lpparam.classLoader);
-                            if (def.hookAll) {
-                                XposedBridge.hookAllMethods(clazz, def.methodName, new XC_MethodHook() {
-                                    @Override
-                                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                                        if (def.beforeHook)
-                                            super.beforeHookedMethod(param);
-                                    }
-
-                                    @Override
-                                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                                        if (def.afterHook)
-                                            super.afterHookedMethod(param);
-                                    }
-                                });
-                            } else {
-                                XposedBridge.hookMethod(def.resolveMember(), new XC_MethodHook() {
-                                    @Override
-                                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                                        if (def.beforeHook)
-                                            super.beforeHookedMethod(param);
-                                    }
-
-                                    @Override
-                                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                                        if (def.afterHook)
-                                            super.afterHookedMethod(param);
-                                    }
-                                });
-                            }
-                        } catch (Exception ignored) {
-                        }
-                    }
-                }
-            }
-        }
     }
 }

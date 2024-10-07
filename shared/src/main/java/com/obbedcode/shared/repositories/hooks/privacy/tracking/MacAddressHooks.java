@@ -3,18 +3,16 @@ package com.obbedcode.shared.repositories.hooks.privacy.tracking;
 import android.net.wifi.WifiInfo;
 
 import com.obbedcode.shared.random.RandomNetworkData;
-import com.obbedcode.shared.repositories.filters.bases.FilterPropertiesDef;
+import com.obbedcode.shared.repositories.filters.bases.FilterPropertiesDefinition;
 import com.obbedcode.shared.xplex.XParam;
-import com.obbedcode.shared.xplex.data.hook.XHookDef;
+import com.obbedcode.shared.xplex.data.hook.XHookDefinition;
 
 import java.net.NetworkInterface;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MacAddressHooks  {
-    public static final List<XHookDef> MAC_HOOKS = Arrays.asList(
+    public static final List<XHookDefinition> MAC_HOOKS = Arrays.asList(
             new MacHookOne(),
             new MacHookTwo(),
             new MacHookThree());
@@ -28,11 +26,12 @@ public class MacAddressHooks  {
 
     public static final String SETTING = "unique.mac.address";
 
-    public static void setHeader(XHookDef def) { def.setHeader(AUTHOR, COLLECTION, GROUP, CONTAINER, DESCRIPTION); }
+    public static void setHeader(XHookDefinition def) { def.setHeader(AUTHOR, COLLECTION, GROUP, CONTAINER, DESCRIPTION); }
 
-    public static class MacHookOne extends XHookDef {
+    public static class MacHookOne extends XHookDefinition {
         public MacHookOne () {
             MacAddressHooks.setHeader(this);
+            super.setHookId("Id/WifiInfo.getMacAddress");
             super.setMethod("getMacAddress");
             super.setClass(WifiInfo.class.getName());
             super.setReturnType(String.class.getName());
@@ -59,9 +58,10 @@ public class MacAddressHooks  {
         }
     }
 
-    public static class MacHookTwo extends XHookDef {
+    public static class MacHookTwo extends XHookDefinition {
         public MacHookTwo() {
             MacAddressHooks.setHeader(this);
+            super.setHookId("Id/NetworkInterface.getHardwareAddress");
             super.setMethod("getHardwareAddress");
             super.setClass(NetworkInterface.class.getName());
             super.setReturnType(byte[].class.getName());        //[B
@@ -90,10 +90,11 @@ public class MacAddressHooks  {
         }
     }
 
-    public static class MacHookThree extends FilterPropertiesDef {
+    public static class MacHookThree extends FilterPropertiesDefinition {
         public MacHookThree() {
             MacAddressHooks.setHeader(this);
-            super.setMethod("*properties*");
+            super.setHookId("Id/Properties(mac)");
+            super.setMethod("*properties*shell*");
             super.setProperties("ro.ril.oem.wifimac", "wlan.driver.macaddr", "ro.ril.oem.btmac", "persist.odm.ril.oem.btmac", "persist.odm.ril.oem.wifimac");
             super.setSettings(SETTING);
             super.setIsAfterHook(true);

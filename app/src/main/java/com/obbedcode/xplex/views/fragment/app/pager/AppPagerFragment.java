@@ -10,6 +10,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.obbedcode.shared.PrefManager;
+import com.obbedcode.shared.logger.XLog;
+import com.obbedcode.shared.xplex.data.XUser;
 import com.obbedcode.shared.xplex.data.hook.XHookApp;
 import com.obbedcode.xplex.R;
 import com.obbedcode.xplex.databinding.BaseTablayoutViewpagerBinding;
@@ -26,6 +28,7 @@ public class AppPagerFragment extends BasePagerFragment {
 
     private final List<Integer> mTabList = Arrays.asList(R.string.tab_app_hook, R.string.tab_app_log, R.string.tab_app_settings);
     private XHookApp targetApplication;
+    private XUser user;
 
     @Nullable
     @Override
@@ -39,6 +42,11 @@ public class AppPagerFragment extends BasePagerFragment {
         super.onViewCreated(view, savedInstanceState);
         this.targetApplication = new XHookApp();
         this.targetApplication.fromBundle(getArguments());
+        this.user = new XUser();
+        this.user.fromBundle(getArguments());
+
+        XLog.i(TAG, "APP=" + targetApplication + "   USER=" + user);
+
         super.refManager = PrefManager.create("AppPagerFrag", "Name");
         super.initEditText();
         super.initSearchButtons();
@@ -61,7 +69,7 @@ public class AppPagerFragment extends BasePagerFragment {
     @Override
     protected Fragment getFragment(int position) {
         switch (position) {
-            case 0: return HooksFragment.newInstance(targetApplication);
+            case 0: return HooksFragment.newInstance(targetApplication, user);
             case 1: return LogsFragment.newInstance(targetApplication);
             case 2: return SettingsFragment.newInstance(targetApplication);
             default: throw new IllegalArgumentException();

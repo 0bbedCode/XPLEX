@@ -11,6 +11,7 @@ import androidx.lifecycle.Transformations;
 
 import com.obbedcode.shared.PrefManager;
 import com.obbedcode.shared.Str;
+import com.obbedcode.shared.logger.XLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,19 +31,29 @@ public abstract class BaseViewModel<T>  extends AndroidViewModel {
 
     public void setType(String type) { this.type = type; }
     public LiveData<List<T>> getRawLiveData() { return this.liveData; }
+    public PrefManager pref;
 
     public BaseViewModel(Application application, String type) {
         super(application);
         this.updateParams = new MutableLiveData<>(new Triple<>(new Pair<>(Str.EMPTY, new ArrayList<>()), new Pair<>(Str.EMPTY, false), 0L));
         this.liveData = setupLiveData(application);
         this.type = type;
+        PrefManager.ensureOpen(application);
+        this.pref = new PrefManager(type, "Application Name"); //Change thisss
         refresh();
     }
 
     public void refresh() {
-        updateParams.setValue(new Triple<>(
+        /*updateParams.setValue(new Triple<>(
                 new Pair<>(PrefManager.order(), getFilterList()),
                 new Pair<>(Str.EMPTY, PrefManager.isReverse()),
+                System.currentTimeMillis()
+        ));*/
+        String order = pref.orderEx();
+        XLog.i("ObbedCode.XP.BaseViewModel", "ORDER=" + order);
+        updateParams.setValue(new Triple<>(
+                new Pair<>(order, getFilterList()),
+                new Pair<>(Str.EMPTY, pref.isReverseEx()),
                 System.currentTimeMillis()
         ));
     }

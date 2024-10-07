@@ -4,12 +4,16 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.obbedcode.shared.logger.XLog;
+
 public class PrefManager {
     private static SharedPreferences pref = null;
 
     public static void ensureOpen(Context context) {
         if(pref == null && context != null) {
-            pref = PreferenceManager.getDefaultSharedPreferences(context);
+
+            pref = context.getSharedPreferences("settings", Context.MODE_PRIVATE);
+            //pref = PreferenceManager.getDefaultSharedPreferences(context);
         }
     }
 
@@ -34,7 +38,10 @@ public class PrefManager {
     public boolean isEnabled(String key) { return pref.getBoolean(id + "_is_"  + key, false); }
 
     public void orderEx(String order) { pref.edit().putString(id + "_order", order).apply(); }
-    public String orderEx() { return pref.getString(id + "_order", defaultOrder); }
+    public String orderEx() {
+        XLog.i("ObbedCode.XP.PrefManager", "PREF IS NULL: " + (pref == null) + " ID=" + id + "  DEF=" + defaultOrder);
+        return pref.getString(id + "_order", defaultOrder);
+    }
 
     public void isReverseEx(boolean isDisabled) { pref.edit().putBoolean(id + "_isReverse", isDisabled).apply(); }
     public boolean isReverseEx() { return pref.getBoolean(id + "_isReverse", false); }
@@ -52,7 +59,9 @@ public class PrefManager {
     public static boolean isDisabled() { return pref.getBoolean("disabled", false); }
 
     public static void order(String order) { pref.edit().putString("order", ORDER_APPLICATION_NAME).apply(); }
-    public static String order() { return pref.getString("order", "Application Name"); }
+    public static String order() {
+        return pref.getString("order", "Application Name");
+    }
 
     public static void isReverse(boolean isDisabled) { pref.edit().putBoolean("isReverse", isDisabled).apply(); }
     public static boolean isReverse() { return pref.getBoolean("isReverse", false); }

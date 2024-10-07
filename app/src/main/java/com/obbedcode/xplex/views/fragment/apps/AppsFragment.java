@@ -11,8 +11,11 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.obbedcode.shared.data.XApp;
+import com.obbedcode.shared.logger.XLog;
+import com.obbedcode.shared.xplex.data.XUser;
+import com.obbedcode.shared.xplex.data.hook.XHookApp;
 import com.obbedcode.xplex.databinding.AppsFragmentBinding;
-import com.obbedcode.xplex.views.activity.AppHookActivity;
+import com.obbedcode.xplex.views.activity.AppHookGroupsActivity;
 import com.obbedcode.xplex.views.adapter.AppsAdapter;
 import com.obbedcode.xplex.views.etc.IOnClearClickListener;
 import com.obbedcode.xplex.views.etc.IOnTabClickListener;
@@ -27,15 +30,20 @@ public class AppsFragment extends BaseFragmentAdapter<AppsFragmentBinding, XApp>
         implements AppsAdapter.OnItemClickListener,
         IOnTabClickListener,
         IOnClearClickListener {
+    private static final String TAG = "ObbedCode.XP.AppsFragment";
 
     private BottomSheetDialog appConfigDialog;
     private BottomSheetDialog appInfoDialog;
     private AppsViewModel mViewModel;
 
-    public static AppsFragment newInstance(String type) {
+    private XUser mUser;
+
+    public static AppsFragment newInstance(String type, XUser user) {
         AppsFragment frag = new AppsFragment();
         Bundle b = new Bundle();
         b.putString("type", type);
+        b.putBundle("user", user.toBundle());
+        XLog.i(TAG, "[new instance] TYPE=" + type + " USER=" + user);
         frag.setArguments(b);
         return frag;
     }
@@ -44,6 +52,11 @@ public class AppsFragment extends BaseFragmentAdapter<AppsFragmentBinding, XApp>
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         String type = getArguments() != null ? getArguments().getString("type", "user") : "user";
+        mUser = new XUser();
+        mUser.fromBundle(getArguments());
+
+        XLog.i(TAG, "USER=" + mUser + " TYPE==" + type);
+
         mViewModel = new ViewModelProvider(this).get(AppsViewModel.class);
         mViewModel.setType(type);
     }
@@ -90,10 +103,13 @@ public class AppsFragment extends BaseFragmentAdapter<AppsFragmentBinding, XApp>
     @Override
     public void onItemClick(XApp app) {
         //Start new Intent
-        Intent settingIntent = new Intent(getActivity(), AppHookActivity.class);
-        settingIntent.putExtra("uid", app.uid);
-        settingIntent.putExtra("name", app.appName);
-        settingIntent.putExtra("packageName", app.packageName);
+        Intent settingIntent = new Intent(getActivity(), AppHookGroupsActivity.class);
+        mUser.toIntent(settingIntent);
+        XHookApp hookedApp = app.toHookApp();
+
+        XLog.i(TAG, "[onItemClick] USER=" + mUser + "  APP=" + hookedApp);
+
+        hookedApp.toIntent(settingIntent);
         startActivity(settingIntent);
     }
 

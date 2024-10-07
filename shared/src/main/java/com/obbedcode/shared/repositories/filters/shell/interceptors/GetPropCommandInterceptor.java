@@ -15,8 +15,8 @@ public class GetPropCommandInterceptor implements ICommandInterceptor {
     @Override
     public boolean isCommand(CommandData data) {
         boolean foundCat = false;
-        if(data != null && data.parts != null) {
-            for(String p : data.parts) {
+        if(data != null && data.commands != null) {
+            for(String p : data.commands) {
                 if(p.equalsIgnoreCase(commandRegex[0]))
                     return true;
                 if(p.equalsIgnoreCase("cat"))
@@ -34,7 +34,7 @@ public class GetPropCommandInterceptor implements ICommandInterceptor {
         boolean foundGetProp = false;
         boolean foundGrep = false;
         List<String> cleanedParts = new ArrayList<>();
-        for(String part : com.parts) {
+        for(String part : com.commands) {
             if(!foundGetProp && (part.equalsIgnoreCase("getprop") || part.contains("build.prop"))) {
                 foundGetProp = true;
             } else {

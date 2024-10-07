@@ -29,7 +29,7 @@ interface IXPService {
 
     List<RunningProcess> getRunningProcesses();
 
-    List<XSetting> getAppHookSettings(int userId, String category);
+    ParceledListSlice<XSetting> getAppSettings(int userId, String category);
 
     //How can I add to my interface a more advance type like
     //List<XApp> XApp being (com.obbedcode.shared.data.XApp)

@@ -1,21 +1,22 @@
 package com.obbedcode.shared.xplex;
 
+import android.util.Log;
+
 import com.obbedcode.shared.Str;
 import com.obbedcode.shared.utils.CommandProcessUtils;
 import com.obbedcode.shared.utils.DataTypeUtils;
-import com.obbedcode.shared.xplex.data.hook.XHookDef;
+import com.obbedcode.shared.xplex.data.hook.XHookDefinition;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.Map;
 
 import de.robv.android.xposed.XC_MethodHook;
 
 public class XParam {
+    private static final String TAG = "ObbedCode.XP.XParam";
+
     public final Map<String, String> settings;
     public final Map<String, String> properties;
-    public final XHookDef hook;
+    public final XHookDefinition hook;
     public final XC_MethodHook.MethodHookParam param;
     public final String packageName;
 
@@ -29,7 +30,7 @@ public class XParam {
 
     public XParam(Map<String, String> settings,
                   Map<String, String> properties,
-                  XHookDef hook,
+                  XHookDefinition hook,
                   XC_MethodHook.MethodHookParam param,
                   String packageName,
                   boolean isBefore) {
@@ -79,7 +80,18 @@ public class XParam {
 
     //Put these in different parts of abstraction
     public Process echoCommand(String data) {
-        return null;
+        try {
+            if(data == null) {
+                Log.e(TAG, "Command passed to the echo was null filling in...");
+                data = "Hello";
+            }
+
+            String[] cmdline = { "sh", "-c", "echo " + data};
+            return Runtime.getRuntime().exec(cmdline);
+        }catch (Exception e) {
+            Log.e(TAG, "Failed to start Dummy Process: " + e);
+            return null;
+        }
     }
 
     public String readCommandOutput() {

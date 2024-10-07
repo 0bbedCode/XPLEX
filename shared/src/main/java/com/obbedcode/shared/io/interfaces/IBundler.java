@@ -1,4 +1,4 @@
-package com.obbedcode.shared.io;
+package com.obbedcode.shared.io.interfaces;
 
 import android.os.Bundle;
 

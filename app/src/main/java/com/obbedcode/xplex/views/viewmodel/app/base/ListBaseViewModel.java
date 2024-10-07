@@ -16,7 +16,7 @@ import java.util.List;
 import kotlin.Pair;
 import kotlin.Triple;
 
-public class AppBaseViewModel<T> extends BaseViewModel<T>
+public class ListBaseViewModel<T> extends BaseViewModel<T>
         implements
         IXHookAppContainer,
         IXUserContainer,
@@ -24,12 +24,11 @@ public class AppBaseViewModel<T> extends BaseViewModel<T>
 
     private static final String TAG = "ObbedCode.XP.AppBaseViewModel";
 
-
     protected XHookApp targetApplication;
     protected XUser targetUser;
     protected IRepository<T> repository;
 
-    public AppBaseViewModel(Application application, String id) { super(application, id); }
+    public ListBaseViewModel(Application application, String id) { super(application, id); }
 
     @Override
     protected List<T> filterData(Triple<Pair<String, List<String>>, Pair<String, Boolean>, Long> params, Application application) {
@@ -37,7 +36,7 @@ public class AppBaseViewModel<T> extends BaseViewModel<T>
         Pair<String, List<String>> filter = params.getFirst();
         Pair<String, Boolean> searchParams = params.getSecond();
         return repository.getFilteredAndSorted(
-                repository.get(targetUser.id, targetApplication.packageName),
+                repository.get(targetUser.id, targetApplication.packageName, type),
                 filter,
                 searchParams.getFirst(),
                 searchParams.getSecond());

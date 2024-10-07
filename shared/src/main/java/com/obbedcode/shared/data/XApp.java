@@ -3,6 +3,7 @@ package com.obbedcode.shared.data;
 
 import android.app.ActivityManager;
 import android.app.ActivityThread;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.IPackageManager;
 import android.content.pm.PackageInfo;
@@ -14,8 +15,10 @@ import android.os.Parcelable;
 import android.os.SystemClock;
 
 import com.obbedcode.shared.api.ApplicationApi;
+import com.obbedcode.shared.io.interfaces.IIntent;
 import com.obbedcode.shared.logger.XLog;
 import com.obbedcode.shared.utils.PkgUtils;
+import com.obbedcode.shared.xplex.data.hook.XHookApp;
 
 import java.sql.Time;
 import java.time.Clock;
@@ -40,6 +43,14 @@ public class XApp implements Parcelable {
     public long firstInstallTime;
     public long size;
     public int targetSdk;
+
+    public XHookApp toHookApp() {
+        XHookApp a = new XHookApp();
+        a.name = appName;
+        a.packageName = packageName;
+        a.uid = uid;
+        return a;
+    }
 
     //data/user/0 would be default, profiles would be in a different sub directory
     public XApp(Parcel in) {

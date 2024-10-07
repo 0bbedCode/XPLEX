@@ -11,10 +11,9 @@ import com.obbedcode.shared.ICopyable;
 import com.obbedcode.shared.db.IDatabaseSerial;
 import com.obbedcode.shared.db.SQLSnake;
 import com.obbedcode.shared.db.SnakeAction;
-import com.obbedcode.shared.hook.repo.Int;
 import com.obbedcode.shared.io.builders.ContentValuesEx;
 import com.obbedcode.shared.utils.CursorUtils;
-import com.obbedcode.shared.xplex.data.hook.XHookDef;
+import com.obbedcode.shared.xplex.data.hook.XHookDefinition;
 
 import java.util.LinkedHashMap;
 
@@ -22,7 +21,7 @@ public class XAssignment extends XIdentity implements IDatabaseSerial, Parcelabl
     public String hook;
     public Kind extra;
 
-    public XHookDef definition;
+    public XHookDefinition definition;
 
     public static XAssignment create(Integer user, String category, String hook, Integer extra) { return new XAssignment(user, category, hook, extra); }
     public static XAssignment create(Integer user, String category, String hook, Kind extra) { return new XAssignment(user, category, hook, extra); }

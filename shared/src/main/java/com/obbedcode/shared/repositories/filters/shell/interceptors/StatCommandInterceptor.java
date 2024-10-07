@@ -8,10 +8,6 @@ import com.obbedcode.shared.repositories.interfaces.ICommandInterceptor;
 import com.obbedcode.shared.utils.CommandProcessUtils;
 import com.obbedcode.shared.xplex.XParam;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class StatCommandInterceptor implements ICommandInterceptor {
     private static final String TAG = "ObbedCode.XP.StatCommandInterceptor";
 
@@ -20,8 +16,8 @@ public class StatCommandInterceptor implements ICommandInterceptor {
     public String[] commandRegex = new String[] { "stat"};
     @Override
     public boolean isCommand(CommandData data) {
-        if(data != null && data.parts != null) {
-            for (String p : data.parts)
+        if(data != null && data.commands != null) {
+            for (String p : data.commands)
                 if(p.equalsIgnoreCase(commandRegex[0]))
                     return true;
         }
@@ -31,8 +27,10 @@ public class StatCommandInterceptor implements ICommandInterceptor {
     @Override
     public boolean handleCommand(XParam param, CommandData com, ICommandHook iCommandHook) {
         try {
+            XLog.i(TAG, "[shell factoryy] Handling Command");
             String result = param.readCommandOutput();
-            String newResult = CommandProcessUtils.randomizeStat(result);
+            XLog.i(TAG, "[shell factoryy] STAT command:\n" + result);
+            String newResult = CommandProcessUtils.randomizeStatOutput(result);
             if(BuildConfig.DEBUG)
                 XLog.i(TAG, "Old:\n" + result + "New:\n" + newResult);
 

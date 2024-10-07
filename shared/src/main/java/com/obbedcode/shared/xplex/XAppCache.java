@@ -6,13 +6,15 @@ import android.content.pm.PackageInfo;
 import com.obbedcode.shared.logger.XLog;
 import com.obbedcode.shared.repositories.HookRepository;
 import com.obbedcode.shared.repositories.SettingRepository;
-import com.obbedcode.shared.repositories.filters.bases.FilterPropertiesDef;
+import com.obbedcode.shared.repositories.filters.bases.FilterPropertiesDefinition;
+import com.obbedcode.shared.repositories.filters.interfaces.IPropertiesFilterDefinition;
+import com.obbedcode.shared.repositories.filters.interfaces.IShellFilterDefinition;
 import com.obbedcode.shared.repositories.interfaces.ICommandInterceptor;
 import com.obbedcode.shared.repositories.interfaces.IFilterFactory;
 import com.obbedcode.shared.repositories.interfaces.IFilterableDefinition;
 import com.obbedcode.shared.xplex.data.XAssignment;
 import com.obbedcode.shared.xplex.data.XIdentity;
-import com.obbedcode.shared.xplex.data.hook.XHookDef;
+import com.obbedcode.shared.xplex.data.hook.XHookDefinition;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,7 +73,7 @@ public class XAppCache {
         }
     }
 
-    public XParam createParam(XC_MethodHook.MethodHookParam param, XHookDef hook, boolean isBefore) {
+    public XParam createParam(XC_MethodHook.MethodHookParam param, XHookDefinition hook, boolean isBefore) {
         return new XParam(
                 settings,
                 properties,
@@ -83,15 +85,25 @@ public class XAppCache {
 
     public XAppCache initAssignments() {
         List<XAssignment> assignmentsCopy = HookRepository.getAssignments(userId, packageName, true);
+
         for(XAssignment ass : assignmentsCopy) {
-            XHookDef def = ass.definition;
-            if(def instanceof FilterPropertiesDef) {
-                //Init Defs that have "properties" linked to them now
-                FilterPropertiesDef propFilter = (FilterPropertiesDef) def;
+            XHookDefinition def = ass.definition;
+
+            //This is JUST to create a Properties List that's all NOTHING MORE
+            if(def instanceof FilterPropertiesDefinition) {
+                FilterPropertiesDefinition propFilter = (FilterPropertiesDefinition) def;
                 String setting = propFilter.settings[0];
                 for(String s : propFilter.properties)
                     properties.put(s, setting);
             }
+
+            //Now we need to Init Factories
+            //IShellFilterDefinition
+            //IPropertiesFilterDefinition
+            //IFilterableDefinition
+
+            //Handle Settings from hooks if setting values r not set
+
 
             if(def instanceof IFilterableDefinition) {
                 IFilterableDefinition defFilter = (IFilterableDefinition) def;

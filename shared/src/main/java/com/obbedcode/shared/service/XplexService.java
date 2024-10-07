@@ -131,7 +131,7 @@ public class XplexService extends IXPService.Stub {
     }
 
     @Override
-    public List<XSetting> getAppHookSettings(int userId, String category) {
+    public ParceledListSlice<XSetting> getAppSettings(int userId, String category) {
         return null;
     }
 }

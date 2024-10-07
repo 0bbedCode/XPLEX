@@ -53,7 +53,15 @@
                 android:value=".MainActivity" />
         </activity>
         <activity
-            android:name=".views.activity.AppHookActivity"
+            android:name=".views.activity.AppHookGroupsActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Xplex">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".views.activity.AppHooksActivity"
             android:exported="true"
             android:theme="@style/Theme.Xplex">
             <meta-data

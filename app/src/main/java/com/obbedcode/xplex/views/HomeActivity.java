@@ -3,6 +3,7 @@ package com.obbedcode.xplex.views;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Process;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,7 +14,9 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.obbedcode.shared.PrefManager;
+import com.obbedcode.shared.logger.XLog;
 import com.obbedcode.shared.settings.LocalSettings;
+import com.obbedcode.shared.xplex.data.XUser;
 import com.obbedcode.xplex.views.activity.AppsActivity;
 import com.obbedcode.xplex.views.activity.app.AppBarActivity;
 import com.obbedcode.xplex.uiex.dialogs.DialogInterfaceEx;
@@ -27,6 +30,9 @@ public class HomeActivity extends AppBarActivity implements DialogInterfaceEx.On
     private AppBarConfiguration appBarConfiguration;
     private MainHomeActivityBinding mBinding;
     private final HomeAdapter adapter = new HomeAdapter();
+    private XUser user = new XUser();
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +45,9 @@ public class HomeActivity extends AppBarActivity implements DialogInterfaceEx.On
 
         PrefManager.ensureOpen(this);
 
+        user.name = LocalSettings.getString(getApplicationContext(), "user_name");
+        XLog.e(TAG, "[init] USER=" + user.name);
+
         rikka.recyclerview.RecyclerViewKt.fixEdgeEffect(rv, true, true);
         rikka.recyclerview.RecyclerViewKt.addItemSpacing(rv, 0, 4f, 0, 4f, TypedValue.COMPLEX_UNIT_DIP);
         rikka.recyclerview.RecyclerViewKt.addEdgeSpacing(rv, 16f, 4f, 16f, 4f, TypedValue.COMPLEX_UNIT_DIP);
@@ -47,8 +56,13 @@ public class HomeActivity extends AppBarActivity implements DialogInterfaceEx.On
     @Override
     protected void onResume() {
         super.onResume();
-        if(!LocalSettings.hasPreference(getApplicationContext(), "user_name"))
+        if(!LocalSettings.hasPreference(getApplicationContext(), "user_name")) {
             GlobalDialogs.invokeSetUsername(getSupportFragmentManager(), this);
+            user = new XUser();
+            user.id = 0;    //0 for now, store this in the DB ???
+            user.name = LocalSettings.getString(getApplicationContext(), "user_name");
+            XLog.i(TAG, "USER USER=" + user.name);
+        }
 
     }
 
@@ -58,6 +72,9 @@ public class HomeActivity extends AppBarActivity implements DialogInterfaceEx.On
             switch (dialogId) {
                 case GlobalDialogs.DIALOG_USERNAME:
                     adapter.updateView(dialogId);
+                    user = new XUser();
+                    user.id = 0;    //0 for now, store this in the DB ???
+                    user.name = LocalSettings.getString(getApplicationContext(), "user_name");
                     break;
             }
         }
@@ -80,7 +97,9 @@ public class HomeActivity extends AppBarActivity implements DialogInterfaceEx.On
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_about:
-                startActivity(new Intent(this, AppsActivity.class));
+                Intent appsIntent = new Intent(this, AppsActivity.class);
+                user.toIntent(appsIntent);
+                startActivity(appsIntent);
 
                 /*AboutDialogBinding binding = AboutDialogBinding.inflate(LayoutInflater.from(this));
                 binding.aboutText.setText(Html.fromHtml(getString(R.string.message_about)));

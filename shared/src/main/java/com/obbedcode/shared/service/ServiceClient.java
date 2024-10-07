@@ -104,5 +104,5 @@ ServiceClient extends IXPService.Stub implements IBinder.DeathRecipient {
 
 
     @Override
-    public List<XSetting> getAppHookSettings(int userId, String category) throws RemoteException { return service.getAppHookSettings(userId, category); }
+    public ParceledListSlice<XSetting> getAppSettings(int userId, String category) throws RemoteException { return service.getAppSettings(userId, category); }
 }

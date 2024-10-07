@@ -5,12 +5,9 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 
 import com.obbedcode.xplex.R;
-import com.obbedcode.xplex.views.fragment.app.HooksFragment;
-import com.obbedcode.xplex.views.fragment.app.LogsFragment;
-import com.obbedcode.xplex.views.fragment.app.SettingsFragment;
 import com.obbedcode.xplex.views.fragment.app.pager.AppPagerFragment;
 
-public class AppHookActivity extends ActivityBase {
+public class AppHookGroupsActivity extends ActivityBase {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.setArgs(getIntent().getExtras());

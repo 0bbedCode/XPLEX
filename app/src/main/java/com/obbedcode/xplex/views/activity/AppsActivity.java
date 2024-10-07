@@ -12,6 +12,7 @@ public class AppsActivity extends ActivityBase {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         setContentView(R.layout.base_activity_two);
+        super.setArgs(getIntent().getExtras());
         super.setBottomNavFragmentTypes(AppsPagerFragment.class);
         super.setBottomNavFragmentIds(R.id.main_bottom_item_1);
         super.onCreate(savedInstanceState);

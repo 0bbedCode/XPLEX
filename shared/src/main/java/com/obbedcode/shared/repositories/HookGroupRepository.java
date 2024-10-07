@@ -2,13 +2,16 @@ package com.obbedcode.shared.repositories;
 
 import com.obbedcode.shared.random.RandomData;
 import com.obbedcode.shared.repositories.interfaces.IRepository;
+import com.obbedcode.shared.xplex.data.hook.XHookDefinition;
 import com.obbedcode.shared.xplex.data.hook.XHookGroup;
 import com.obbedcode.shared.xplex.data.XIdentity;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import kotlin.Pair;
 
@@ -19,7 +22,7 @@ public class HookGroupRepository implements IRepository<XHookGroup> {
     public List<XHookGroup> get() { return getGroupHooksForApp(XIdentity.GLOBAL_USER, XIdentity.GLOBAL_NAMESPACE); }
 
     @Override
-    public List<XHookGroup> get(int userId, String packageName) {
+    public List<XHookGroup> get(int userId, String packageName, String type) {
         return getGroupHooksForApp(userId, packageName);
     }
 
@@ -36,18 +39,23 @@ public class HookGroupRepository implements IRepository<XHookGroup> {
 
     //
     public static List<XHookGroup> getGroupHooksForApp(int userId, String packageName) {
-        List<XHookGroup> data = new ArrayList<>();
+        Map<String, XHookGroup> groups = new HashMap<>();
+        Map<String, XHookDefinition> hooks = HookRepository.getHookDefinitions();
+        for(Map.Entry<String, XHookDefinition> e : hooks.entrySet()) {
+            XHookDefinition h = e.getValue();
+            XHookGroup group = groups.get(h.group);
+            if(group == null) {
+                group = new XHookGroup();
+                group.name = h.group;
+                group.id = h.group;
+                group.description = "Privacy Shit";
+                groups.put(h.group, group);
+            } else {
 
-        for(int i = 0; i < RandomData.generateNumber(8, 30); i++) {
-            XHookGroup g = new XHookGroup();
-            g.name = RandomData.generateNumberString(5);
-            g.id = RandomData.generateNumberString(5);
-            g.description = RandomData.generateNumberString(5);
-            data.add(g);
+            }
         }
 
-
-        return data;
+        return new ArrayList<>(groups.values());
     }
 
     public static List<XHookGroup> getFilteredAndSortedGroups(

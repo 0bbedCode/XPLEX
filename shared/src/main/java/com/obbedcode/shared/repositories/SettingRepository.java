@@ -22,7 +22,7 @@ public class SettingRepository implements IRepository<XSetting> {
     }
 
     @Override
-    public List<XSetting> get(int userId, String packageName) {
+    public List<XSetting> get(int userId, String packageName, String type) {
         return getSettingsForApp(userId, packageName);
     }
 
@@ -35,9 +35,8 @@ public class SettingRepository implements IRepository<XSetting> {
     public static Map<String, String> getSettings(int userId, String packageName) {
         List<XSetting> settings = getSettingsForApp(userId, packageName);
         Map<String, String> map = new HashMap<>();
-        for(XSetting set : settings) {
+        for(XSetting set : settings)
             map.put(set.name, set.value);
-        }
 
         return map;
     }

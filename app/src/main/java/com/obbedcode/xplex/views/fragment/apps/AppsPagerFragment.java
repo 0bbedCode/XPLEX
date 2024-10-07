@@ -17,6 +17,8 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;
 import com.obbedcode.shared.PrefManager;
 import com.obbedcode.shared.UiGlobals;
+import com.obbedcode.shared.logger.XLog;
+import com.obbedcode.shared.xplex.data.XUser;
 import com.obbedcode.xplex.R;
 import com.obbedcode.xplex.databinding.BaseTablayoutViewpagerBinding;
 import com.obbedcode.xplex.databinding.BottomDialogSearchFilterBinding;
@@ -31,7 +33,10 @@ import java.util.List;
 import kotlin.Pair;
 
 public class AppsPagerFragment extends BasePagerFragment {
+    private static final String TAG = "ObbedCode.XP.AppsPagerFragment";
     private final List<Integer> mTabList = Arrays.asList(R.string.tab_user_apps, R.string.tab_configured_apps, R.string.tab_system_apps);
+
+    private XUser mUser;
 
     @Nullable
     @Override
@@ -39,6 +44,14 @@ public class AppsPagerFragment extends BasePagerFragment {
         _binding = BaseTablayoutViewpagerBinding.inflate(inflater, container, false);
         //setupFilterButton();
         createFilterButton();
+
+        if(mUser == null || mUser.name == null) {
+            mUser = new XUser();
+            mUser.fromBundle(getArguments());
+            XLog.i(TAG, "USER=" + mUser);
+        }
+
+
         //Then FAB ?
         return _binding.getRoot();
     }
@@ -52,6 +65,11 @@ public class AppsPagerFragment extends BasePagerFragment {
         super.filterTitles = Arrays.asList(UiGlobals.FILTER_CONFIGURED, UiGlobals.FILTER_LAST_UPDATE, UiGlobals.FILTER_DISABLED);
 
 
+        if(mUser == null || mUser.name == null) {
+            mUser = new XUser();
+            mUser.fromBundle(getArguments());
+            XLog.i(TAG, "USER=" + mUser);
+        }
 
         super.initEditText();
         super.initSearchButtons();
@@ -83,9 +101,9 @@ public class AppsPagerFragment extends BasePagerFragment {
     @Override
     protected Fragment getFragment(int position) {
         switch (position) {
-            case 0: return AppsFragment.newInstance(UiGlobals.TAB_USER);
-            case 1: return AppsFragment.newInstance(UiGlobals.TAB_CONFIGURED);
-            case 2: return AppsFragment.newInstance(UiGlobals.TAB_SYSTEM);
+            case 0: return AppsFragment.newInstance(UiGlobals.TAB_USER, mUser);
+            case 1: return AppsFragment.newInstance(UiGlobals.TAB_CONFIGURED, mUser);
+            case 2: return AppsFragment.newInstance(UiGlobals.TAB_SYSTEM, mUser);
             default: throw new IllegalArgumentException();
         }
     }

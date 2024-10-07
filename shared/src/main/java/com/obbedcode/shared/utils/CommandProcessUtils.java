@@ -1,7 +1,11 @@
 package com.obbedcode.shared.utils;
 
+import com.obbedcode.shared.random.RandomDateTime;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class CommandProcessUtils {
@@ -19,96 +23,124 @@ public class CommandProcessUtils {
         return sb.toString();
     }
 
-
-    public static boolean isDigit(char c) { return Character.isDigit(c); }
-    public static boolean isAlpha(char c) { return Character.isAlphabetic(c); }
-    public static boolean isSpace(char c) { return c == ' ' || c == '\t' || c == '\b'; }
-    public static boolean isValidTimeValue(boolean lastWasTime, char c) { return lastWasTime && (c == ' ' || c == '-' || c == ':' || c == '+' || c == '.' || Character.isDigit(c)); }
-    public static boolean isValidDeviceValue(boolean lastWasDevice, char c) { return lastWasDevice && (c == '/' || Character.isDigit(c) || Character.isAlphabetic(c)); }
-
-    public static class FieldPointer {
+    public static class FieldValuePointer {
         public boolean lastWasTime = false;
         public boolean lastWasDevice = false;
         public boolean lastWasInode = false;
-        public boolean expectingValue = false;
+
+        private boolean mExpectingValue = false;
         public String field = null;
 
+        public String timeOffset;
+        private final Map<String, Integer> mDates = new HashMap<>();
+        private StringBuilder mValueBuilder = new StringBuilder();
+
+        public boolean valueIsEmpty() { return mValueBuilder == null || mValueBuilder.length() == 0; }
+
+        public boolean expectingValue() {  return mExpectingValue; }
+        public String getValue(boolean resetValue, boolean resetAll) {
+            String val = valueIsEmpty() ? "" : mValueBuilder.toString();
+            if(resetValue) mValueBuilder = new StringBuilder();
+            if(resetAll) reset();
+            return val;
+        }
+
+        public boolean partOfValue(char c) {
+            boolean appended = false;
+            if(lastWasTime) {
+                //Accepted Time Stamp Value Chars
+                appended = !(c == '-' && mValueBuilder.length() == 0) && (c == ' ' || c == '-' || c == ':' || c == '+' || c == '.' || Character.isDigit(c));
+            }
+            if(lastWasDevice) {
+                //Accepted Device Value Chars
+                appended = c == '/' || Character.isDigit(c) || Character.isAlphabetic(c);
+            }
+            //Accepted Generic Value Chars
+            if(!appended) appended = mExpectingValue && Character.isDigit(c);
+            if(appended) mValueBuilder.append(c);
+            return appended;
+        }
+
+        public FieldValuePointer() {
+            timeOffset = RandomDateTime.generateRandomTimeZoneOffset();
+            //int androidReleaseYear = 2008; // First Android release
+            //2008-12-31 09:00:00.000000000
+            //1969-12-31 18:00:00.000000000 (default)
+            ThreadLocalRandom rand = ThreadLocalRandom.current();
+            int currentYear = RandomDateTime.getCurrentYear();
+            int birthYear = rand.nextInt(2009, currentYear + 1);
+            int modifyYear = rand.nextInt(birthYear, currentYear + 1);
+            mDates.put("birth", birthYear);
+            mDates.put("create", birthYear);
+            mDates.put("modify", modifyYear);
+            mDates.put("change", rand.nextInt(modifyYear, currentYear + 1));
+            mDates.put("access", rand.nextInt(modifyYear, currentYear + 1));
+        }
+
+        public int getYearForField() {
+            return field == null ?
+                    ThreadLocalRandom.current().nextInt(1969, RandomDateTime.getCurrentYear() + 1) :  mDates.get(field.toLowerCase());
+        }
+
         public void ensureField(String fieldName) {
-            if("inode:".equalsIgnoreCase(fieldName)) {
-                expectingValue = true;
-                lastWasInode = true;
-                field = "Inode";
-            }
-            else if("device:".equalsIgnoreCase(fieldName)) {
-                lastWasDevice = true;
-                expectingValue = true;
-                field = "Device";
-            }
-            else if("access:".equalsIgnoreCase(fieldName) || "modify:".equalsIgnoreCase(fieldName) || "change:".equalsIgnoreCase(fieldName) || "birth:".equalsIgnoreCase(fieldName)) {
-                lastWasTime = true;
-                expectingValue = true;
-                field = fieldName.substring(0, fieldName.length() - 1);
-            } else {
-                reset();
+            if(fieldName != null && fieldName.length() > 3) {
+                String fld = fieldName.trim().toLowerCase();
+                fld = fld.endsWith(":") && fld.length() > 3 ? fld.substring(0, fld.length() - 1) : fld;
+                switch(fld) {
+                    case "inode":
+                        lastWasInode = true;
+                        mExpectingValue = true;
+                        field = "Inode";
+                        break;
+                    case "device":
+                        lastWasDevice = true;
+                        mExpectingValue = true;
+                        field = "Device";
+                        break;
+                    case "access":
+                    case "modify":
+                    case "change":
+                    case "birth":
+                    case "create":
+                        lastWasTime = true;
+                        mExpectingValue = true;
+                        field = fld.substring(0, 1).toUpperCase() + fld.substring(1);
+                        break;
+                    default:
+                        reset();
+                        break;
+                }
             }
         }
 
         public void reset() {
             lastWasTime = false;
             lastWasDevice = false;
-            expectingValue = false;
+            mExpectingValue = false;
             lastWasInode = false;
             field = null;
+            mValueBuilder = new StringBuilder();
         }
     }
 
-
-    public static String generateNumber(int low, int high) {
-        int num = ThreadLocalRandom.current().nextInt(low, high);
-        if(num <= 9) {
-            return "0" + String.valueOf(num);
-        } else {
-            return String.valueOf(num);
-        }
-    }
-
-    public static String randomizeStat(String input) {
+    public static String randomizeStatOutput(String input) {
         StringBuilder currentChunk = new StringBuilder();
         StringBuilder full = new StringBuilder();
-        StringBuilder value = new StringBuilder();
 
         int lastIndex = input.length() - 1;
-
-        FieldPointer ptr = new FieldPointer();
+        FieldValuePointer ptr = new FieldValuePointer();
         char[] chars = input.toCharArray();
         for (int i = 0; i < chars.length; i++) {
             char c = chars[i];
-
-            if(ptr.expectingValue) {
-                boolean added = false;
-                if(isValidTimeValue(ptr.lastWasTime, c) ||
-                        isValidDeviceValue(ptr.lastWasDevice, c) ||
-                        (ptr.expectingValue && Character.isDigit(c))) {
-
-                    if(ptr.lastWasTime && c == '-' && value.length() == 0) {
-                        //Skip
-                    } else {
-                        value.append(c);
-                        added = true;
-                    }
-                }
-
+            if(ptr.expectingValue()) {
+                boolean added = ptr.partOfValue(c);
                 if(!added || i == lastIndex) {
-                    if(value.length() > 0) {
-                        //System.out.println("[1] Field: [" + ptr.field + "] Value: [" + value + "]");
-                        full.append(cleanValue(ptr, value.toString()));
-                        value = new StringBuilder();
+                    if(!ptr.valueIsEmpty()) {
+                        //System.out.println("[1] Field: [" + ptr.field + "] Value: [" + ptr.getValue(false, false) + "]");
+                        full.append(cleanValue(ptr, ptr.getValue(true, false)));
                     }
 
-                    if(!added) {
-                        full.append(c);
-                    }
-
+                    if(!added)  full.append(c);
                     ptr.reset();
                 }
 
@@ -116,11 +148,9 @@ public class CommandProcessUtils {
             }
 
             if(c == '\n') {
-                if(ptr.expectingValue || value.length() > 0) {
+                if(ptr.expectingValue() || !ptr.valueIsEmpty()) {
                     //System.out.println("[2] Field: [" + ptr.field + "] Value: [" + value + "]");
-                    //full.append(value);
-                    full.append(cleanValue(ptr, value.toString()));
-                    value = new StringBuilder();
+                    full.append(cleanValue(ptr, ptr.getValue(true, false)));
                     ptr.reset();
                 }
 
@@ -136,12 +166,10 @@ public class CommandProcessUtils {
                     ptr.ensureField(cChunk);
                     currentChunk = new StringBuilder();
                     full.append(cChunk);
-                } else if(value.length() > 0) {
+                } else if(!ptr.valueIsEmpty()) {
                     //End of Value like Inode
-                    //full.append(value);
                     //System.out.println("[3] Field: [" + ptr.field + "] Value: [" + value + "]");
-                    full.append(cleanValue(ptr, value.toString()));
-                    value = new StringBuilder();
+                    full.append(cleanValue(ptr, ptr.getValue(true, false)));
                     ptr.reset();
                 }
             }
@@ -154,84 +182,116 @@ public class CommandProcessUtils {
             full.append(c);
         }
 
-        //System.out.println("\nOld:\n" + input);
-        //System.out.println("\n\nNew:\n" + full);
         return full.toString();
     }
 
-    private static String cleanValue(FieldPointer ptr, String value) {
+    private static String cleanValue(FieldValuePointer ptr, String value) {
         if(ptr.lastWasTime) {
-            String val = value.toString();
-            if(val.length() > 8) {
-                String[] halfs = val.split(" ");
-                //String[] tops = halfs[0].split("-");
+            if(value.length() > 8) {
+                //2024-10-04 11:52:56.023000000
+                //2016-10-04 11:52:56.233000000 +0300
+                String[] halfs = value.split(" ");
+                //Split by the space
+                StringBuilder dateValue = new StringBuilder();
+                //1969-12-31 18:00:00.000000000 (default)
 
-                StringBuilder sb = new StringBuilder();
-                sb.append(generateNumber(1969, 2024));
-                sb.append("-");
-                sb.append(generateNumber(1, 12));
-                sb.append("-");
-                sb.append(generateNumber(1, 29));
-                sb.append(" ");
+                //Generate a Year
+                //int randomYear = generateRandomYear(1969, 2024);
+                int year = ptr.getYearForField();
+                //System.out.println()
+                dateValue.append(year);                                                                                         //Generate the Year
+                dateValue.append("-");
+                int randomMonth = RandomDateTime.generateRandomMonth();
+                dateValue.append(RandomDateTime.formatAsTwoDigits(randomMonth));                                                //Generate the Month
+                dateValue.append("-");
+                dateValue.append(RandomDateTime.formatAsTwoDigits(RandomDateTime.generateRandomDay(randomMonth, year)));        //Generate the Day
 
-                String lowHalf = halfs[1];
-                if(lowHalf.contains(":")) {
-                    String[] lowParts = lowHalf.split(":");
-                    StringBuilder lowBuild = new StringBuilder();
-                    int sz = lowParts.length - 1;
-                    for(int j = 0; j < lowParts.length; j++) {
-                        String el = lowParts[j];
-                        if(el.contains(".")) {
-                            //Decimal big value
-                            String[] decParts = el.split("\\.");
-                            if(decParts.length > 1) {
-                                String decimalEnd = decParts[1];
-                                lowBuild.append(generateNumber(0, 56));
-                                lowBuild.append(".");
-                                boolean allZeros = ThreadLocalRandom.current().nextBoolean();
-
-                                if(allZeros) {
-                                    lowBuild.append("000000000");
+                if(halfs.length > 1) {
+                    //Lower Half => 11:52:56.233000000
+                    //              hours, minutes, seconds, nanos
+                    dateValue.append(" ");
+                    String lowHalf = halfs[1];
+                    if(lowHalf.contains(":")) {
+                        String[] lowHalfParts = lowHalf.split(":");
+                        StringBuilder lowBuild = new StringBuilder();
+                        int sz = lowHalfParts.length - 1;
+                        for(int j = 0; j < lowHalfParts.length; j++) {
+                            String part = lowHalfParts[j];
+                            if(part.contains(".")) {
+                                String[] decimalParts = part.split("\\.");
+                                if(decimalParts.length > 1) {
+                                    //.xxxxxxxxx
+                                    String decimalEnd = decimalParts[1];
+                                    lowBuild.append(RandomDateTime.generateRandomSeconds());
+                                    lowBuild.append(".");                   //56.x
+                                    if(decimalEnd.length() > 2) {
+                                        boolean allZeros = ThreadLocalRandom.current().nextBoolean();
+                                        lowBuild.append(allZeros ? "000000000" : RandomDateTime.generateRandomNanoseconds());
+                                    } else {
+                                        lowBuild.append(RandomDateTime.generateRandomHundredths());
+                                    }
                                 } else {
-                                    lowBuild.append(generateNumber(100000000, 999999999));
+                                    lowBuild.append(RandomDateTime.generateRandomSeconds());
                                 }
                             } else {
-                                lowBuild.append(generateNumber(0, 56));
+                                switch(j) {
+                                    case 0:
+                                        lowBuild.append(RandomDateTime.generateRandomHours());
+                                        break;
+                                    case 1:
+                                        lowBuild.append(RandomDateTime.generateRandomMinutes());
+                                        break;
+                                    default:
+                                        lowBuild.append(generateNumber(10, 18));
+                                        break;
+                                }
                             }
-                        } else {
-                            lowBuild.append(generateNumber(10, 18));
+                            if(j != sz)
+                                lowBuild.append(":");
                         }
 
-                        if(j != sz) {
-                            lowBuild.append(":");
-                        }
+                        dateValue.append(lowBuild);
+                    } else {
+                        dateValue.append(RandomDateTime.generateRandomHours());
                     }
 
-                    sb.append(lowBuild);
-                } else {
-                    sb.append(halfs[1]);
+                    if(halfs.length == 3) {
+                        dateValue.append(" ");
+                        dateValue.append(ptr.timeOffset);
+                    }
                 }
-
-                return sb.toString();
-                //full.append(sb);
-                //value = new StringBuilder();
+                return dateValue.toString();
+            } else {
+                return generateNumber(100000, 9999999);
             }
         } else if(ptr.lastWasDevice) {
-            String low = generateNumber(100, 1000);
-            String hig = generateNumber(1000, 9999);
-            return low + "h/" + hig + "d";
-            //full.append(low + "h/" + hig + "d");
-            //value = new StringBuilder();
+            return generateDeviceId();
         } else if(ptr.lastWasInode) {
-            //full.append(generateNumber(58, 9999999));
-            //value = new StringBuilder();
             return generateNumber(58, 9999999);
-        } else {
-            //full.append(value);
-            //value = new StringBuilder();
-            return value;
         }
 
         return value;
+    }
+
+    private static String generateNumber(int low, int high) {
+        int num = ThreadLocalRandom.current().nextInt(low, high);
+        if(num <= 9) {
+            return "0" + String.valueOf(num);
+        } else {
+            return String.valueOf(num);
+        }
+    }
+
+    private static String generateDeviceId() {
+        // Generate major number (1-255)
+        int majorNumber = ThreadLocalRandom.current().nextInt(1, 256);
+        // Generate minor number (0-255)
+        int minorNumber = ThreadLocalRandom.current().nextInt(256);
+        // Combine major and minor numbers
+        int combinedNumber = (majorNumber << 8) | minorNumber;
+        // Format the output
+        String hexRepresentation = String.format("%xh", combinedNumber);
+        String decimalRepresentation = String.format("%dd", combinedNumber);
+        return hexRepresentation + "/" + decimalRepresentation;
     }
 }

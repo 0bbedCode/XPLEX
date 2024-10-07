@@ -3,7 +3,7 @@ package com.obbedcode.shared.xplex.data;
 import android.os.Bundle;
 
 import com.obbedcode.shared.io.builders.BundleBuilder;
-import com.obbedcode.shared.io.IBundler;
+import com.obbedcode.shared.io.interfaces.IBundler;
 
 public class XLogLog implements IBundler {
     //App info ??

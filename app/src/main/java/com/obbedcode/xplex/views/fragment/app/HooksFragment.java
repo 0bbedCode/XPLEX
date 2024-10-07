@@ -1,5 +1,6 @@
 package com.obbedcode.xplex.views.fragment.app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -8,10 +9,14 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.obbedcode.shared.io.builders.BundleBuilder;
+import com.obbedcode.shared.logger.XLog;
 import com.obbedcode.shared.xplex.data.hook.XHookApp;
 import com.obbedcode.shared.xplex.data.hook.XHookGroup;
 import com.obbedcode.shared.xplex.data.XUser;
 import com.obbedcode.xplex.databinding.AppHookFragmentBinding;
+import com.obbedcode.xplex.views.activity.AppHookGroupsActivity;
+import com.obbedcode.xplex.views.activity.AppHooksActivity;
 import com.obbedcode.xplex.views.adapter.app.HookGroupAdapter;
 import com.obbedcode.xplex.views.etc.IOnClearClickListener;
 import com.obbedcode.xplex.views.etc.IOnTabClickListener;
@@ -34,20 +39,29 @@ public class HooksFragment
     private static final String TAG = "ObbedCode.XP.HooksFragment";
 
     private HookGroupViewModel mViewModel;
+    private XHookApp mApp;
+    private XUser mUser;
 
-    public static HooksFragment newInstance(XHookApp app) {
+    public static HooksFragment newInstance(XHookApp app, XUser user) {
         HooksFragment frag = new HooksFragment();
-        frag.setArguments(app.toBundle());
+        frag.setArguments(BundleBuilder.combine(app.toBundle(), user.toBundle()));
+        XLog.i(TAG, "[new instance] APP=" + app + "  USER=" + user);
         return frag;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         mViewModel = new ViewModelProvider(this).get(HookGroupViewModel.class);
-        XHookApp app = new XHookApp();
-        app.fromBundle(getArguments());
-        mViewModel.setHookApplication(app);
-        mViewModel.setTargetUser(XUser.DEFAULT);
+        mApp = new XHookApp();
+        mApp.fromBundle(getArguments());
+
+        mUser = new XUser();
+        mUser.fromBundle(getArguments());
+
+        XLog.i(TAG, "APP=" + mApp + "  USER=" + mUser);
+
+        mViewModel.setHookApplication(mApp);
+        mViewModel.setTargetUser(mUser);
         super.onCreate(savedInstanceState);
     }
 
@@ -79,6 +93,14 @@ public class HooksFragment
     @Override
     public void onItemClick(XHookGroup group) {
         //todo
+        Intent settingIntent = new Intent(getActivity(), AppHooksActivity.class);
+
+        XLog.i(TAG, "APP=" + mApp + "  USER=" + mUser + "  GROUP=" + group);
+
+        mApp.toIntent(settingIntent);
+        mUser.toIntent(settingIntent);
+        group.toIntent(settingIntent);
+        startActivity(settingIntent);
     }
 
     @Override

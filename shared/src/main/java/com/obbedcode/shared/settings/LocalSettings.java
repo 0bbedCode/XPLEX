@@ -10,6 +10,8 @@ import com.obbedcode.shared.logger.XLog;
 public class LocalSettings {
     private static final String TAG = "ObbedCode.LocalSettings";
 
+
+
     public static boolean hasPreference(Context context, String prefName) {
         if(Str.isValid(prefName)) {
             try {

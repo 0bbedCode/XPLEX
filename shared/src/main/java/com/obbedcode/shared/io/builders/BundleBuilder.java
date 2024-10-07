@@ -14,6 +14,13 @@ public class BundleBuilder {
         mWriteIfNull = writeIfNull;
     }
 
+    public static Bundle combine(Bundle a, Bundle b) {
+        Bundle c = new Bundle();
+        c.putAll(a);
+        c.putAll(b);
+        return c;
+    }
+
     public BundleBuilder writeIfNull(boolean writeIfNull) {
         mWriteIfNull = writeIfNull;
         return this;
